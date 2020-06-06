@@ -8,7 +8,7 @@
     <border type="none"/>
     <children>
       <grid id="f2981" binding="gridPanel" layout-manager="GridBagLayout">
-        <constraints border-constraint="North"/>
+        <constraints border-constraint="West"/>
         <properties/>
         <border type="none"/>
         <children/>

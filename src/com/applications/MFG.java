@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MFG {
    public static void main(String[] args) {
@@ -23,26 +24,24 @@ public class MFG {
    public MFG(){
       _buttonCache = new ArrayList<>();
       frame = new JFrame("MFG");
+      frame.setContentPane(mainPanel);
       frame.addKeyListener(new KeyListener() {
          @Override
          public void keyTyped(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_Z) {
-               container.Revert();
-               RefreshAllPanel();
-            }
+
          }
 
          @Override
          public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_Z) {
-               container.Revert();
-               RefreshAllPanel();
-            }
+
          }
 
          @Override
          public void keyReleased(KeyEvent e) {
-
+            if(e.getKeyCode() == KeyEvent.VK_Z) {
+               container.Revert();
+               RefreshAllPanel();
+            }
          }
       });
       frame.setFocusable(true);
@@ -58,15 +57,19 @@ public class MFG {
       RefreshAllPanel();
       frame.setVisible(true);
    }
-
+   private AtomicBoolean atomic = new AtomicBoolean(false);
+   private Thread workingthread;
    private void computeAction() {
-      compute.setEnabled(false);
-      for(JButton b:_buttonCache)
-         b.setEnabled(false);
+      if(atomic.get())
+      {
+         workingthread.interrupt();
+         atomic.set(false);
+      }
+      atomic.set(true);
       result.setText("Computing");
       if(ratio.isSelected())
       {
-         Thread thread = new Thread(){
+         workingthread = new Thread(){
             public void run(){
                double r = 0.0;
                try {
@@ -75,14 +78,14 @@ public class MFG {
                   //too big need to approximate.
                }
                result.setText(String.format("%.12f", r));
-//               EnableInterfaces();
+               atomic.set(false);
             }
          };
-         thread.start();
+         workingthread.start();
       }
       else if(exact.isSelected())
       {
-         Thread thread = new Thread(){
+         workingthread = new Thread(){
             public void run(){
                long r = 0;
                try {
@@ -91,19 +94,11 @@ public class MFG {
                   //too big need to approximate.
                }
                result.setText(String.valueOf(r));
-               EnableInterfaces();
+               atomic.set(false);
             }
          };
-         thread.start();
+         workingthread.start();
       }
-      EnableInterfaces();
-   }
-
-   private void EnableInterfaces() {
-      for (JButton b : _buttonCache)
-         b.setEnabled(true);
-      compute.setEnabled(true);
-      frame.validate();
    }
 
    private JFrame frame;
@@ -122,10 +117,8 @@ public class MFG {
    private void RefreshAllPanel()
    {
       RefreshMatPanel(gridPanel);
-      mainPanel.add(gridPanel);
       if(updateEveryStep.isSelected())
          computeAction();
-      frame.setContentPane(mainPanel);
       frame.pack();
    }
    private void RefreshMatPanel(JPanel pane)
@@ -297,7 +290,7 @@ public class MFG {
             _buttonCache.add(b);
             pane.add(b,gbc);
          }
-      pane.revalidate();
+      //pane.revalidate();
       pane.repaint();
    }
 
