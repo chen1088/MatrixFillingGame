@@ -1,5 +1,7 @@
 package com.applications;
 
+import com.sun.jdi.InternalException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -38,39 +40,80 @@ public class FourDNF {
       }
       return Evaluate(tmpvar);// for all one case
    }
-   public long Count()
+   public boolean[] Greedy()
+   {
+      //TODO: Polynomial algorithm
+      int varsize = 0;
+      for(Clause c : clauses)
+         for(Literal l : c.literals)
+         {
+            varsize = Math.max(varsize, l.varidx + 1);
+         }
+      boolean[] tmpvar = new boolean[varsize];
+
+      return tmpvar;
+   }
+   public long Count() throws InterruptedException
    {
       int varsize = 0;
       for (Clause c : clauses)
-      for (Literal l : c.literals)
-      {
-         varsize = Math.max(varsize, l.varidx + 1);
-      }
+         for (Literal l : c.literals)
+         {
+            varsize = Math.max(varsize, l.varidx + 1);
+         }
       boolean[] tmpvar = new boolean[varsize];
       long ret = 0;
+      final long checkintinterval = 100;
+      long counter = 0;
       while (!EqualsOne(tmpvar))
       {
+         if(counter >= checkintinterval) {
+            counter = 0;
+            if (Thread.currentThread().isInterrupted())
+               throw new InterruptedException();
+         }
          boolean tmp = Evaluate(tmpvar);
          if (tmp) ++ret;
          IncByOne(tmpvar);
+         counter++;
       }
       if (Evaluate(tmpvar)) ++ret;// for all one case
       return ret;
    }
+   // Basic approximation
    public double ApproximateRatio()
    {
-      return 0.0;
+      it.unimi.dsi.util.XorShift1024StarPhiRandom gen = new it.unimi.dsi.util.XorShift1024StarPhiRandom();
+      double res = 0.0;
+      int varsize = 0;
+      for (Clause c : clauses)
+         for (Literal l : c.literals)
+         {
+            varsize = Math.max(varsize, l.varidx + 1);
+         }
+      boolean[] tmpvar = new boolean[varsize];
+      long hit = 0;
+      long count = 0;
+      long total = 100000;
+      while(count < total)
+      {
+         // randomize an assignment
+         for(int i = 0;i<varsize;++i)
+         {
+            tmpvar[i] = gen.nextBoolean();
+         }
+         if(Evaluate(tmpvar)) hit++;
+         count++;
+      }
+      return (double)hit/(double)total;
    }
 
    public static void IncByOne(boolean[] vs)
    {
-      boolean carry = true;
       for(int i = 0;i<vs.length;++i)
       {
-         boolean nv = !vs[i];
-         carry = vs[i];
-         vs[i]=nv;
-         if (!carry) return;
+         vs[i] = !vs[i];
+         if (vs[i]) return;
       }
    }
 

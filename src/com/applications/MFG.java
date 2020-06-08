@@ -72,12 +72,18 @@ public class MFG {
          workingthread = new Thread(){
             public void run(){
                double r = 0.0;
-               try {
+               double r2 = 0.0;
+               double r3 = 0.0;
+               try{
                   r = container.RatioDRFfillingsOfMaxConf();
-               } catch (Exception exception) {
-                  //too big need to approximate.
+                  r2 = container.RatioDRFfillings();
+                  r3 = container.APRRatioDRFfillings();
+               }catch(InterruptedException e)
+               {
+                  return;
                }
-               result.setText(String.format("%.12f", r));
+
+               result.setText(String.format("RatioOfMax:%.10f\nRatioOfS:%.10f\nAPRRatioOfS:%.10f", r,r2,r3));// r2 should be small
                atomic.set(false);
             }
          };
@@ -90,8 +96,8 @@ public class MFG {
                long r = 0;
                try {
                   r = container.CountDRFfillingsOfMaxConf();
-               } catch (Exception exception) {
-                  //too big need to approximate.
+               } catch (InterruptedException e) {
+                  return;
                }
                result.setText(String.valueOf(r));
                atomic.set(false);
