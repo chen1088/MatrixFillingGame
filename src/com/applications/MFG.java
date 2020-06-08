@@ -17,10 +17,15 @@ public class MFG {
       {
 
       }
-
+      fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+      redone = new Font(fonts[0],Font.BOLD,18);
+      greenzero = new Font(fonts[0],Font.PLAIN, 18);
       MFG instance = new MFG();
 
    }
+   private static String[] fonts;
+   private static Font redone;
+   private static Font greenzero;
    public MFG(){
       _buttonCache = new ArrayList<>();
       frame = new JFrame("MFG");
@@ -155,6 +160,7 @@ public class MFG {
          b.setBackground(Color.red);
          b.setOpaque(true);
          b.setText("+");
+         b.setMargin(new Insets(0, 0, 0, 0));
          b.setName(String.valueOf(i));
          b.setFocusable(false);
          b.addActionListener(new ActionListener() {
@@ -176,6 +182,7 @@ public class MFG {
          b.setBackground(Color.gray);
          b.setOpaque(true);
          b.setText("-");
+         b.setMargin(new Insets(0, 0, 0, 0));
          b.setName(String.valueOf(i));
          b.setFocusable(false);
          b.addActionListener(new ActionListener() {
@@ -201,6 +208,7 @@ public class MFG {
          b.setBackground(Color.red);
          b.setOpaque(true);
          b.setText("+");
+         b.setMargin(new Insets(0, 0, 0, 0));
          b.setName(String.valueOf(i));
          b.setFocusable(false);
          b.addActionListener(new ActionListener() {
@@ -222,6 +230,7 @@ public class MFG {
          b.setBackground(Color.gray);
          b.setOpaque(true);
          b.setText("-");
+         b.setMargin(new Insets(0, 0, 0, 0));
          b.setName(String.valueOf(i));
          b.setFocusable(false);
          b.addActionListener(new ActionListener() {
@@ -240,11 +249,13 @@ public class MFG {
       //matrix
       gbc.ipadx = ws;
       gbc.ipady = hs;
+
       for(int i = 0;i<h;++i)
          for(int j = 0;j<w;++j)
          {
             JButton b = new JButton();
             b.setPreferredSize(new Dimension(ws,hs));
+            b.setMargin(new Insets(0, 0, 0, 0));
             b.setName(Integer.toString(i)+","+Integer.toString(j));
             b.setFocusable(false);
             gbc.gridx = 2*j+2;
@@ -252,6 +263,9 @@ public class MFG {
             if(m[i][j] == 1)
             {
                b.setText("1");
+               b.setFont(redone);
+               b.setForeground(Color.red);
+               b.setBackground(Color.red);
                b.addActionListener(new ActionListener() {
                   @Override
                   public void actionPerformed(ActionEvent e) {
@@ -267,6 +281,9 @@ public class MFG {
             else if(m[i][j] == 0)
             {
                b.setText("0");
+               b.setFont(greenzero);
+               b.setForeground(Color.BLUE);
+               b.setBackground(Color.BLUE);
                b.addActionListener(new ActionListener() {
                   @Override
                   public void actionPerformed(ActionEvent e) {

@@ -415,8 +415,6 @@ public class BMContainer {
          for(int j = 0; j<width; ++j)
             if (m[i][j] == 2)
                numberofvars++;
-      if (numberofvars >= 40)
-         return -1;
       FourDNF dnf = convertToDNF(ignm, m);
       return 1.0 - dnf.ApproximateRatio();
    }
