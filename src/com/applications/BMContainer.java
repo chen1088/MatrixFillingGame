@@ -415,7 +415,7 @@ public class BMContainer {
          for(int j = 0; j<width; ++j)
             if (m[i][j] == 2)
                numberofvars++;
-      FourDNF dnf = convertToDNF(ignm, m);
+      FourDNF dnf = ConvertToDNF(ignm, m);
       return 1.0 - dnf.ApproximateRatio();
    }
    public long CountDRFfillings() throws InterruptedException {
@@ -428,7 +428,7 @@ public class BMContainer {
                numberofvars++;
       if (numberofvars >= 40)
          return -1;
-      FourDNF dnf = convertToDNF(ignm, m);
+      FourDNF dnf = ConvertToDNF(ignm, m);
       long tmppower = 1;
       for (int i = 0; i < numberofvars; ++i)
          tmppower *= 2;
@@ -445,7 +445,7 @@ public class BMContainer {
                numberofvars++;
       if (numberofvars >= 40)
          return -1.0;
-      FourDNF dnf = convertToDNF(ignm, m);
+      FourDNF dnf = ConvertToDNF(ignm, m);
       long tmppower = 1;
       for (int i = 0; i < numberofvars; ++i)
          tmppower *= 2;
@@ -461,7 +461,7 @@ public class BMContainer {
       numberofvars++;
       if (numberofvars >= 40)
          return -1;
-      FourDNF dnf = convertToDNF(ignm, m);
+      FourDNF dnf = ConvertToDNF(ignm, m);
       long tmppower = 1;
       for (int i = 0; i < numberofvars; ++i)
          tmppower *= 2;
@@ -478,13 +478,13 @@ public class BMContainer {
       numberofvars++;
       if (numberofvars >= 40)
          return -1.0;
-      FourDNF dnf = convertToDNF(ignm, m);
+      FourDNF dnf = ConvertToDNF(ignm, m);
       long tmppower = 1;
       for (int i = 0; i < numberofvars; ++i)
          tmppower *= 2;
       return (double)(tmppower - dnf.Count())/(double)tmppower;
    }
-   private FourDNF convertToDNF(boolean[][] ignm, Integer[][] m)
+   public FourDNF ConvertToDNF(boolean[][] ignm, Integer[][] m)
    {
       FourDNF ret = new FourDNF();
       //index of vars

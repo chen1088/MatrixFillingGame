@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/MatrixFillingGame_jar</output-path>
     <root id="archive" name="MatrixFillingGame.jar">
       <element id="module-output" name="MatrixFillingGame" />
+      <element id="library" level="project" name="it.unimi.dsi:dsiutils:2.6.5" />
     </root>
   </artifact>
 </component>

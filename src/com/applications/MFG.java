@@ -2,10 +2,7 @@ package com.applications;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -45,7 +42,7 @@ public class MFG {
          public void keyReleased(KeyEvent e) {
             if(e.getKeyCode() == KeyEvent.VK_Z) {
                container.Revert();
-               RefreshAllPanel();
+               RefreshGridPanel();
             }
          }
       });
@@ -59,57 +56,67 @@ public class MFG {
             computeAction();
          }
       });
-      RefreshAllPanel();
+      updateEveryStep.addItemListener(new ItemListener() {
+         @Override
+         public void itemStateChanged(ItemEvent e) {
+            compute.setEnabled(!compute.isEnabled());
+         }
+      });
+      // stats panel
+      worker = new WorkerStatCountM(container,result1,progressBar1);
+      RefreshGridPanel();
       frame.setVisible(true);
    }
    private AtomicBoolean atomic = new AtomicBoolean(false);
+   private SwingWorker worker;
    private Thread workingthread;
    private void computeAction() {
-      if(atomic.get())
-      {
-         workingthread.interrupt();
-         atomic.set(false);
-      }
-      atomic.set(true);
-      result.setText("Computing");
-      if(ratio.isSelected())
-      {
-         workingthread = new Thread(){
-            public void run(){
-               double r = 0.0;
-               double r2 = 0.0;
-               double r3 = 0.0;
-               try{
-                  r = container.RatioDRFfillingsOfMaxConf();
-                  r2 = container.RatioDRFfillings();
-                  r3 = container.APRRatioDRFfillings();
-               }catch(InterruptedException e)
-               {
-                  return;
-               }
+      worker.cancel(true);
+      worker = new WorkerStatCountM(container,result1,progressBar1);
+      worker.execute();
+//      worker = new SwingWorker() {
+//         @Override
+//         protected Object doInBackground() throws Exception {
+//            return null;
+//         }
+//      };
 
-               result.setText(String.format("RatioOfMax:%.10f\nRatioOfS:%.10f\nAPRRatioOfS:%.10f", r,r2,r3));// r2 should be small
-               atomic.set(false);
-            }
-         };
-         workingthread.start();
-      }
-      else if(exact.isSelected())
-      {
-         workingthread = new Thread(){
-            public void run(){
-               long r = 0;
-               try {
-                  r = container.CountDRFfillingsOfMaxConf();
-               } catch (InterruptedException e) {
-                  return;
-               }
-               result.setText(String.valueOf(r));
-               atomic.set(false);
-            }
-         };
-         workingthread.start();
-      }
+//      if(workingthread != null&&workingthread.isAlive())
+//      {
+//         workingthread.interrupt();
+////         atomic.set(false);
+//      }
+////      atomic.set(true);
+//      workingthread = new Thread(){
+//         public void run(){
+//            double r = 0.0;
+//            double r2;
+//            double r3;
+//            long r4 = 0;
+//            try{
+//               if(ratio.isSelected())
+//                  r = container.RatioDRFfillingsOfMaxConf();
+//               if(exact.isSelected())
+//                  r4 = container.CountDRFfillingsOfMaxConf();
+//               r2 = container.RatioDRFfillings();
+//               r3 = container.APRRatioDRFfillings();
+//            }catch(InterruptedException e)
+//            {
+//               return;
+//            }
+//            StringBuilder resultString = new StringBuilder();
+//            if(ratio.isSelected())
+//               resultString.append(String.format("RatioOfMax:%.10f\n",r));
+//            if(exact.isSelected())
+//               resultString.append(String.format("ExactCountOfMax:%d\n",r4));
+//            resultString.append(String.format("RatioOfAll1:%.10f\n",r2));
+//            resultString.append(String.format("APRRatioOfAll1:%.10f",r3));
+//            result.setText(resultString.toString());// r2 should be small
+////            atomic.set(false);
+//         }
+//      };
+      result.setText("Computing");
+//      workingthread.start();
    }
 
    private JFrame frame;
@@ -122,15 +129,23 @@ public class MFG {
    private JCheckBox updateEveryStep;
    private JTextArea result;
    private JButton compute;
+   private JCheckBox enable1;
+   private JTextField result1;
+   private JProgressBar progressBar1;
+   private JPanel worker1;
    private BMContainer container;
    private ArrayList<JButton> _buttonCache;
 
-   private void RefreshAllPanel()
+   private void RefreshGridPanel()
    {
       RefreshMatPanel(gridPanel);
       if(updateEveryStep.isSelected())
          computeAction();
       frame.pack();
+   }
+   private void MakeStatsPanel()
+   {
+
    }
    private void RefreshMatPanel(JPanel pane)
    {
@@ -168,7 +183,7 @@ public class MFG {
             public void actionPerformed(ActionEvent e) {
                JButton eb = (JButton)e.getSource();
                container.InsertRow(Integer.parseInt(eb.getName()));
-               RefreshAllPanel();
+               RefreshGridPanel();
             }
          });
          gbc.gridy = 2*i+1;
@@ -191,7 +206,7 @@ public class MFG {
                if(container.Height()<=1)return;
                JButton eb = (JButton)e.getSource();
                container.RemoveRow(Integer.parseInt(eb.getName()));
-               RefreshAllPanel();
+               RefreshGridPanel();
             }
          });
          gbc.gridy = 2*i+2;
@@ -216,7 +231,7 @@ public class MFG {
             public void actionPerformed(ActionEvent e) {
                JButton eb = (JButton)e.getSource();
                container.InsertCol(Integer.parseInt(eb.getName()));
-               RefreshAllPanel();
+               RefreshGridPanel();
             }
          });
          gbc.gridx = 2*i+1;
@@ -239,7 +254,7 @@ public class MFG {
                if(container.Width()<=1)return;
                JButton eb = (JButton)e.getSource();
                container.RemoveCol(Integer.parseInt(eb.getName()));
-               RefreshAllPanel();
+               RefreshGridPanel();
             }
          });
          gbc.gridx = 2*i+2;
@@ -274,7 +289,7 @@ public class MFG {
                      Integer r = Integer.parseInt(ebs[0]);
                      Integer c = Integer.parseInt(ebs[1]);
                      container.SetEntry(r,c,2);
-                     RefreshAllPanel();
+                     RefreshGridPanel();
                   }
                });
             }
@@ -292,7 +307,7 @@ public class MFG {
                      Integer r = Integer.parseInt(ebs[0]);
                      Integer c = Integer.parseInt(ebs[1]);
                      container.SetEntry(r,c,1);
-                     RefreshAllPanel();
+                     RefreshGridPanel();
                   }
                });
             }
@@ -306,7 +321,7 @@ public class MFG {
                      Integer r = Integer.parseInt(ebs[0]);
                      Integer c = Integer.parseInt(ebs[1]);
                      container.SetEntry(r,c,1);
-                     RefreshAllPanel();
+                     RefreshGridPanel();
                   }
                });
             }
