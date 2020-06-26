@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public abstract class MFGSwingWorker extends SwingWorker {
+public abstract class MFGSwingWorker extends SwingWorker<String,Object> {
    public BMContainer container;
    public JTextField resultField;
    public JProgressBar progressBar;
@@ -31,7 +31,7 @@ public abstract class MFGSwingWorker extends SwingWorker {
    @Override
    protected void done() {
       try {
-         if(!isCancelled())resultField.setText(get().toString());
+         if(!isCancelled())resultField.setText(get());
       } catch (InterruptedException e) {
          e.printStackTrace();
       } catch (ExecutionException e) {

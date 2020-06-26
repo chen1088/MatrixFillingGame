@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MFG {
    public static void main(String[] args) {
@@ -63,60 +62,34 @@ public class MFG {
          }
       });
       // stats panel
-      worker = new WorkerStatCountM(container,result1,progressBar1);
+      worker1 = new WorkerStatCountM(container,result1,progressBar1);
+      worker2 = new WorkerStatRatioM(container,result2, progressBar2);
       RefreshGridPanel();
       frame.setVisible(true);
    }
-   private AtomicBoolean atomic = new AtomicBoolean(false);
-   private SwingWorker worker;
-   private Thread workingthread;
+   private SwingWorker worker1;
+   private SwingWorker worker2;
    private void computeAction() {
-      worker.cancel(true);
-      worker = new WorkerStatCountM(container,result1,progressBar1);
-      worker.execute();
-//      worker = new SwingWorker() {
-//         @Override
-//         protected Object doInBackground() throws Exception {
-//            return null;
-//         }
-//      };
-
-//      if(workingthread != null&&workingthread.isAlive())
-//      {
-//         workingthread.interrupt();
-////         atomic.set(false);
-//      }
-////      atomic.set(true);
-//      workingthread = new Thread(){
-//         public void run(){
-//            double r = 0.0;
-//            double r2;
-//            double r3;
-//            long r4 = 0;
-//            try{
-//               if(ratio.isSelected())
-//                  r = container.RatioDRFfillingsOfMaxConf();
-//               if(exact.isSelected())
-//                  r4 = container.CountDRFfillingsOfMaxConf();
-//               r2 = container.RatioDRFfillings();
-//               r3 = container.APRRatioDRFfillings();
-//            }catch(InterruptedException e)
-//            {
-//               return;
-//            }
-//            StringBuilder resultString = new StringBuilder();
-//            if(ratio.isSelected())
-//               resultString.append(String.format("RatioOfMax:%.10f\n",r));
-//            if(exact.isSelected())
-//               resultString.append(String.format("ExactCountOfMax:%d\n",r4));
-//            resultString.append(String.format("RatioOfAll1:%.10f\n",r2));
-//            resultString.append(String.format("APRRatioOfAll1:%.10f",r3));
-//            result.setText(resultString.toString());// r2 should be small
-////            atomic.set(false);
-//         }
-//      };
-      result.setText("Computing");
-//      workingthread.start();
+      worker1.cancel(true);
+      if(enable1.isSelected())
+      {
+         worker1 = new WorkerStatCountM(container,result1,progressBar1);
+         worker1.execute();
+      }
+      else
+      {
+         result1.setText("");
+      }
+      worker2.cancel(true);
+      if(enable2.isSelected())
+      {
+         worker2 = new WorkerStatRatioM(container,result2,progressBar2);
+         worker2.execute();
+      }
+      else
+      {
+         result2.setText("");
+      }
    }
 
    private JFrame frame;
@@ -124,15 +97,16 @@ public class MFG {
    private JPanel gridPanel;
    private JPanel rightPanel;
    private JPanel downPanel;
-   private JRadioButton ratio;
-   private JRadioButton exact;
    private JCheckBox updateEveryStep;
-   private JTextArea result;
    private JButton compute;
    private JCheckBox enable1;
    private JTextField result1;
    private JProgressBar progressBar1;
-   private JPanel worker1;
+   private JPanel stat1;
+   private JPanel stat2;
+   private JCheckBox enable2;
+   private JTextField result2;
+   private JProgressBar progressBar2;
    private BMContainer container;
    private ArrayList<JButton> _buttonCache;
 
@@ -328,7 +302,6 @@ public class MFG {
             _buttonCache.add(b);
             pane.add(b,gbc);
          }
-      //pane.revalidate();
       pane.repaint();
    }
 
