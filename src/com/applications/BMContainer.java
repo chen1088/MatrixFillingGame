@@ -1,7 +1,5 @@
 package com.applications;
 
-import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -10,13 +8,13 @@ public class BMContainer {
    //private ArrayList<Command> commands = new ArrayList<Command>();
    private ArrayList<Integer> ignorerows;
    private ArrayList<Integer> ignorecols;
-   private final ArrayList<Pair<Integer, Integer>> ignoreentries;
+   private final ArrayList<Tuple<Integer, Integer>> ignoreentries;
    private Integer height;
    private Integer width;
    private final Stack<ArrayList<BMEntry>> matrixhistory;
    private final Stack<ArrayList<Integer>> ignorerowshistory;
    private final Stack<ArrayList<Integer>> ignorecolshistory;
-   private final Stack<ArrayList<Pair<Integer, Integer>>> ignoreentrieshistory;
+   private final Stack<ArrayList<Tuple<Integer, Integer>>> ignoreentrieshistory;
    private final Stack<Integer> heighthistory;
    private final Stack<Integer> widthhistory;
 
@@ -74,7 +72,7 @@ public class BMContainer {
          String[] i = m.split(",");
          Integer r = Integer.parseInt(i[0]);
          Integer c = Integer.parseInt(i[1]);
-         ignoreentries.add(new Pair<>(r, c));
+         ignoreentries.add(new Tuple<>(r, c));
       }
       String[] rs = parts[4].split("/");
       for(String r : rs)
@@ -99,9 +97,9 @@ public class BMContainer {
          ret.append(d.rIdx).append(',').append(d.cIdx).append(',').append(d.val).append('/');
       }
       ret.append(';');
-      for (Pair<Integer,Integer> m : ignoreentries)
+      for (Tuple<Integer,Integer> m : ignoreentries)
       {
-         ret.append(m.getKey()).append(',').append(m.getValue()).append('/');
+         ret.append(m.get1()).append(',').append(m.get2()).append('/');
       }
       ret.append(';');
       for (Integer r : ignorerows)
@@ -132,9 +130,9 @@ public class BMContainer {
    }
    public void SetIgnore(Integer r, Integer c, boolean ignore)
    {
-      for(Pair<Integer,Integer> t : ignoreentries)
+      for(Tuple<Integer,Integer> t : ignoreentries)
       {
-         if(t.getKey().equals(r) && t.getValue().equals(c))
+         if(t.get1().equals(r) && t.get2().equals(c))
          {
             if (!ignore)
             {
@@ -144,7 +142,7 @@ public class BMContainer {
          }
       }
       if(ignore)
-         ignoreentries.add(new Pair<>(r, c));
+         ignoreentries.add(new Tuple<>(r, c));
    }
    public void SetIgnorerow(Integer row, boolean ignore)
    {
@@ -196,8 +194,8 @@ public class BMContainer {
       for (Integer i : ignorecols)
       for (int j = 0; j < height; ++j)
          ret[j][i] = true;
-      for (Pair<Integer, Integer> t : ignoreentries)
-      ret[t.getKey()][t.getValue()] = true;
+      for (Tuple<Integer, Integer> t : ignoreentries)
+      ret[t.get1()][t.get2()] = true;
       return ret;
    }
    public boolean[][] GetForcedMap()
