@@ -113,9 +113,17 @@ public class FourDNF {
       }
       return (double)hit/(double)total;
    }
-   //Smart approximation
+   //Importance Sampling -- Dealing with the low probability cases
+   public double ApproximateRatioIS()
+   {
+      it.unimi.dsi.util.XorShift1024StarPhiRandom gen = new it.unimi.dsi.util.XorShift1024StarPhiRandom();
+      
+      return 0.0;
+   }
+   //Smart approximation -- Smarter than importance sampling
    public double SmartApproximationRatio()
    {
+
       return 0.0;
    }
 
