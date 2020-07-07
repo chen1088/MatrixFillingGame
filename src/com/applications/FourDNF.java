@@ -95,8 +95,20 @@ public class FourDNF {
    //Importance Sampling -- Dealing with the low probability cases
    public double ApproximateRatioIS()
    {
+      if(varsize == -1) Normalize();
       it.unimi.dsi.util.XorShift1024StarPhiRandom gen = new it.unimi.dsi.util.XorShift1024StarPhiRandom();
+      boolean[] tmpvar = new boolean[varsize];
+      long hit = 0;
+      long count = 0;
+      long total = 100000;
+      // compute |U'|
       
+      while(count <total)
+      {
+         // pick a clause
+
+         count++;
+      }
       return 0.0;
    }
    //Smart approximation -- Smarter than importance sampling
