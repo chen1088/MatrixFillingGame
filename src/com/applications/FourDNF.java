@@ -5,13 +5,13 @@ import com.sun.jdi.InternalException;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class FourDNF {
    public ArrayList<Clause> clauses = new ArrayList<>();
    public MFGSwingWorker caller;
-   public int varsize;
-   public int numofclauses;
+   public int varsize = -1;
    public boolean Evaluate(boolean[] values)
    {
       for(Clause c : clauses)
@@ -29,12 +29,7 @@ public class FourDNF {
    }
    public boolean Exists()
    {
-      int varsize = 0;
-      for(Clause c : clauses)
-      for(Literal l : c.literals)
-      {
-         varsize = Math.max(varsize, l.varidx + 1);
-      }
+      if(varsize == -1) Normalize();
       boolean[] tmpvar = new boolean[varsize];
       while(!EqualsOne(tmpvar))
       {
@@ -47,24 +42,14 @@ public class FourDNF {
    public boolean[] Greedy()
    {
       //TODO: Polynomial algorithm
-      int varsize = 0;
-      for(Clause c : clauses)
-         for(Literal l : c.literals)
-         {
-            varsize = Math.max(varsize, l.varidx + 1);
-         }
+      if(varsize == -1) Normalize();
       boolean[] tmpvar = new boolean[varsize];
 
       return tmpvar;
    }
    public long Count()
    {
-      int varsize = 0;
-      for (Clause c : clauses)
-         for (Literal l : c.literals)
-         {
-            varsize = Math.max(varsize, l.varidx + 1);
-         }
+      if(varsize == -1) Normalize();
       boolean[] tmpvar = new boolean[varsize];
       long ret = 0;
       final long checkintinterval = 10000;
@@ -89,14 +74,8 @@ public class FourDNF {
    // Basic approximation
    public double ApproximateRatio()
    {
+      if(varsize == -1) Normalize();
       it.unimi.dsi.util.XorShift1024StarPhiRandom gen = new it.unimi.dsi.util.XorShift1024StarPhiRandom();
-      double res = 0.0;
-      int varsize = 0;
-      for (Clause c : clauses)
-         for (Literal l : c.literals)
-         {
-            varsize = Math.max(varsize, l.varidx + 1);
-         }
       boolean[] tmpvar = new boolean[varsize];
       long hit = 0;
       long count = 0;
@@ -143,5 +122,42 @@ public class FourDNF {
             return false;
       }
       return true;
+   }
+
+   //This will normalize the indices so that the dnf will not have index holes.
+   public void Normalize()
+   {
+      int vars = 0;
+      for (Clause c : clauses)
+         for (Literal l : c.literals)
+         {
+            vars = Math.max(vars, l.varidx + 1);
+         }
+
+      boolean[] vs = new boolean[vars];
+      for(Clause c: clauses)
+         for(Literal l: c.literals)
+         {
+            vs[l.varidx] = true;
+         }
+      HashMap<Integer,Integer> nmap = new HashMap<>();
+      int space = 0;
+      for(int i = 0;i<vars;++i)
+      {
+         if(!vs[i])
+         {
+            ++space;
+         }
+         else
+         {
+            nmap.put(i,i-space);
+         }
+      }
+      varsize = vars - space;
+      for(Clause c: clauses)
+         for(Literal l:c.literals)
+         {
+            l.varidx = nmap.get(l.varidx);
+         }
    }
 }
