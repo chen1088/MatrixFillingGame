@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.stream.Stream;
 
 public class FourDNF {
@@ -90,7 +91,7 @@ public class FourDNF {
          if(Evaluate(tmpvar)) hit++;
          count++;
       }
-      return (double)hit/(double)total;
+      return (double)hit/(double)count;
    }
    //Importance Sampling -- Dealing with the low probability cases
    public double ApproximateRatioIS()
@@ -102,14 +103,45 @@ public class FourDNF {
       long count = 0;
       long total = 100000;
       // compute |U'|
-      
+      long szup = 0;
+      for(Clause c: clauses)
+      {
+         szup += Math.pow(2,varsize-c.literals.size());
+      }
+      if(clauses.size() <= 0) return 1.0;
       while(count <total)
       {
          // pick a clause
-
+         int cind = gen.nextInt(clauses.size());
+         HashSet<Integer> lset = new HashSet<>();
+         for(Literal l: clauses.get(cind).literals)
+         {
+            lset.add(l.varidx);
+            tmpvar[l.varidx] = !l.neg;
+         }
+         for(int i = 0;i<varsize;++i)
+         {
+            if(lset.contains(i)) continue;;
+            tmpvar[i] = gen.nextBoolean();
+         }
+         boolean inch = true;
+         for(int i = 0;i<cind;++i)
+         {
+            boolean temp = true;
+            for(Literal l : clauses.get(i).literals)
+            {
+               if (!temp) break;
+               boolean lval = (l.varidx < varsize) ? tmpvar[l.varidx] : false;
+               temp = l.neg != lval;
+            }
+            if (temp)
+               inch = false;
+         }
+         if(inch) hit++;
          count++;
       }
-      return 0.0;
+      double factor = (double)szup/Math.pow(2,varsize);
+      return (double)hit/(double)count * factor;
    }
    //Smart approximation -- Smarter than importance sampling
    public double SmartApproximationRatio()

@@ -83,14 +83,36 @@
               </component>
             </children>
           </grid>
-          <grid id="cea74" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="cea74" binding="stat3" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+            <constraints/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="43b4e" class="javax.swing.JCheckBox" binding="enable3">
+                <constraints/>
+                <properties>
+                  <selected value="true"/>
+                  <text value="APRIS"/>
+                </properties>
+              </component>
+              <component id="f2734" class="javax.swing.JTextField" binding="result3">
+                <constraints/>
+                <properties/>
+              </component>
+              <component id="310a7" class="javax.swing.JProgressBar" binding="progressBar3" default-binding="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+          <grid id="34a0e" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints/>
             <properties/>
             <border type="none"/>
             <children/>
           </grid>
-          <grid id="34a0e" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="2061c" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints/>
             <properties/>

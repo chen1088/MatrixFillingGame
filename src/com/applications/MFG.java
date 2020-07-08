@@ -64,11 +64,13 @@ public class MFG {
       // stats panel
       worker1 = new WorkerStatCountM(container,result1,progressBar1);
       worker2 = new WorkerStatRatioM(container,result2, progressBar2);
+      worker3 = new WorkerStatAPRIS(container,result3, progressBar3);
       RefreshGridPanel();
       frame.setVisible(true);
    }
    private SwingWorker worker1;
    private SwingWorker worker2;
+   private SwingWorker worker3;
    private void computeAction() {
       worker1.cancel(true);
       if(enable1.isSelected())
@@ -90,6 +92,16 @@ public class MFG {
       {
          result2.setText("");
       }
+      worker3.cancel(true);
+      if(enable3.isSelected())
+      {
+         worker3 = new WorkerStatAPRIS(container,result3,progressBar3);
+         worker3.execute();
+      }
+      else
+      {
+         result3.setText("");
+      }
    }
 
    private JFrame frame;
@@ -107,6 +119,10 @@ public class MFG {
    private JCheckBox enable2;
    private JTextField result2;
    private JProgressBar progressBar2;
+   private JPanel stat3;
+   private JTextField result3;
+   private JProgressBar progressBar3;
+   private JCheckBox enable3;
    private BMContainer container;
    private ArrayList<JButton> _buttonCache;
 
