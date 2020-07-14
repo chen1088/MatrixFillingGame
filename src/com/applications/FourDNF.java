@@ -21,7 +21,7 @@ public class FourDNF {
          for(Literal l : c.literals)
          {
             if (!temp) break;
-            boolean lval = (l.varidx < values.length) ? values[l.varidx] : false;
+            boolean lval = (l.varidx < values.length) && values[l.varidx];
             temp = l.neg != lval;
          }
          if (temp) return true;

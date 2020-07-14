@@ -23,6 +23,6 @@ public class WorkerStatAPRIS extends MFGSwingWorker{
          return "-1";
       FourDNF dnf = container.ConvertToDNF(ignm, m);
       dnf.caller = this;
-      return String.format("%.10f",1.0 - dnf.ApproximateRatioIS());//Importance Sampling performs worse.
+      return String.format("%.10f",1.0 - dnf.ApproximateRatio());//Importance Sampling performs worse.
    }
 }
