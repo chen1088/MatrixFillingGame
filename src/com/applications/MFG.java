@@ -67,6 +67,7 @@ public class MFG {
       worker3 = new WorkerStatAPRIS(container,result3, progressBar3);
       RefreshGridPanel();
       frame.setVisible(true);
+      frame.pack();
    }
    private SwingWorker worker1;
    private SwingWorker worker2;

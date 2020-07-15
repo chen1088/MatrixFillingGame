@@ -1,13 +1,8 @@
 package com.applications;
 
-import com.sun.jdi.InternalException;
-
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.stream.Stream;
 
 public class FourDNF {
    public ArrayList<Clause> clauses = new ArrayList<>();
@@ -76,6 +71,7 @@ public class FourDNF {
    public double ApproximateRatio()
    {
       if(varsize == -1) Normalize();
+      if(varsize == 0) return 0.0;
       it.unimi.dsi.util.XorShift1024StarPhiRandom gen = new it.unimi.dsi.util.XorShift1024StarPhiRandom();
       boolean[] tmpvar = new boolean[varsize];
       long hit = 0;
