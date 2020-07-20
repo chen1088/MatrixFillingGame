@@ -65,13 +65,15 @@ public class MFG {
       worker1 = new WorkerStatCountM(container,result1,progressBar1);
       worker2 = new WorkerStatRatioM(container,result2, progressBar2);
       worker3 = new WorkerStatAPRIS(container,result3, progressBar3);
+      worker4 = new WorkerStatHypoM(container,result4,progressBar4);
       RefreshGridPanel();
-      frame.setVisible(true);
       frame.pack();
+      frame.setVisible(true);
    }
    private SwingWorker worker1;
    private SwingWorker worker2;
    private SwingWorker worker3;
+   private SwingWorker worker4;
    private void computeAction() {
       worker1.cancel(true);
       if(enable1.isSelected())
@@ -103,6 +105,16 @@ public class MFG {
       {
          result3.setText("");
       }
+      worker4.cancel(true);
+      if(enable4.isSelected())
+      {
+         worker4 = new WorkerStatHypoM(container,result4,progressBar4);
+         worker4.execute();
+      }
+      else
+      {
+         result4.setText("");
+      }
    }
 
    private JFrame frame;
@@ -124,6 +136,10 @@ public class MFG {
    private JTextField result3;
    private JProgressBar progressBar3;
    private JCheckBox enable3;
+   private JPanel stat4;
+   private JCheckBox enable4;
+   private JTextField result4;
+   private JProgressBar progressBar4;
    private BMContainer container;
    private ArrayList<JButton> _buttonCache;
 
@@ -133,6 +149,7 @@ public class MFG {
       if(updateEveryStep.isSelected())
          computeAction();
       frame.pack();
+      frame.requestFocusInWindow();
    }
    private void MakeStatsPanel()
    {

@@ -294,11 +294,6 @@ public class BMContainer {
       return ret;
    }
 
-   public boolean HasDiagRect()
-   {
-
-      return false;
-   }
    public void InsertRow(Integer idx)
    {
       saveSnapshot();
@@ -405,83 +400,7 @@ public class BMContainer {
       ret[i][j] = 0;
       return ret;
    }
-   public double APRRatioDRFfillings() {
-      boolean[][] ignm = GetFullIgnoreMap();
-      Integer[][] m = GetFullMatrix();
-      int numberofvars = 0;
-      for(int i = 0; i<height; ++i)
-         for(int j = 0; j<width; ++j)
-            if (m[i][j] == 2)
-               numberofvars++;
-      FourDNF dnf = ConvertToDNF(ignm, m);
-      return 1.0 - dnf.ApproximateRatio();
-   }
-   public long CountDRFfillings() throws InterruptedException {
-      boolean[][] ignm = GetFullIgnoreMap();
-      Integer[][] m = GetFullMatrix();
-      int numberofvars = 0;
-      for(int i = 0; i<height; ++i)
-         for(int j = 0; j<width; ++j)
-            if (m[i][j] == 2)
-               numberofvars++;
-      if (numberofvars >= 40)
-         return -1;
-      FourDNF dnf = ConvertToDNF(ignm, m);
-      long tmppower = 1;
-      for (int i = 0; i < numberofvars; ++i)
-         tmppower *= 2;
-      if (numberofvars == 0) tmppower = 0;
-      return tmppower - dnf.Count();
-   }
-   public double RatioDRFfillings() throws InterruptedException {
-      boolean[][] ignm = GetFullIgnoreMap();
-      Integer[][] m = GetFullMatrix();
-      int numberofvars = 0;
-      for (int i = 0; i < height; ++i)
-         for (int j = 0; j < width; ++j)
-            if (m[i][j] == 2)
-               numberofvars++;
-      if (numberofvars >= 40)
-         return -1.0;
-      FourDNF dnf = ConvertToDNF(ignm, m);
-      long tmppower = 1;
-      for (int i = 0; i < numberofvars; ++i)
-         tmppower *= 2;
-      return (double)(tmppower - dnf.Count())/(double)tmppower;
-   }
-   public long CountDRFfillingsOfMaxConf() throws InterruptedException {
-      boolean[][] ignm = GetFullIgnoreMap();
-      Integer[][] m = GetMaximalConf();
-      int numberofvars = 0;
-      for(int i = 0; i<height; ++i)
-         for(int j = 0; j<width; ++j)
-            if (m[i][j] == 2)
-      numberofvars++;
-      if (numberofvars >= 40)
-         return -1;
-      FourDNF dnf = ConvertToDNF(ignm, m);
-      long tmppower = 1;
-      for (int i = 0; i < numberofvars; ++i)
-         tmppower *= 2;
-      if (numberofvars == 0) tmppower = 0;
-      return tmppower - dnf.Count();
-   }
-   public double RatioDRFfillingsOfMaxConf() throws InterruptedException {
-      boolean[][] ignm = GetFullIgnoreMap();
-      Integer[][] m = GetMaximalConf();
-      int numberofvars = 0;
-      for (int i = 0; i < height; ++i)
-         for (int j = 0; j < width; ++j)
-            if (m[i][j] == 2)
-      numberofvars++;
-      if (numberofvars >= 40)
-         return -1.0;
-      FourDNF dnf = ConvertToDNF(ignm, m);
-      long tmppower = 1;
-      for (int i = 0; i < numberofvars; ++i)
-         tmppower *= 2;
-      return (double)(tmppower - dnf.Count())/(double)tmppower;
-   }
+
    public FourDNF ConvertToDNF(boolean[][] ignm, Integer[][] m)
    {
       FourDNF ret = new FourDNF();
