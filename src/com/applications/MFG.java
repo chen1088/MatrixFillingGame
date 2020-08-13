@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MFG {
    public static void main(String[] args) {
@@ -62,59 +63,22 @@ public class MFG {
          }
       });
       // stats panel
-      worker1 = new WorkerStatCountM(container,result1,progressBar1);
-      worker2 = new WorkerStatRatioM(container,result2, progressBar2);
-      worker3 = new WorkerStatAPRIS(container,result3, progressBar3);
-      worker4 = new WorkerStatHypoM(container,result4,progressBar4);
+      panels = new ArrayList<MFGWorkerPanel>(){
+         {
+            add(new MFGWorkerPanel(new WorkerStatCountM(container),rightPanel));
+            add(new MFGWorkerPanel(new WorkerStatRatioM(container),rightPanel));
+            add(new MFGWorkerPanel(new WorkerStatAPRIS(container),rightPanel));
+            add(new MFGWorkerPanel(new WorkerStatHypoM(container),rightPanel));
+         }
+      };
       RefreshGridPanel();
       frame.pack();
       frame.setVisible(true);
    }
-   private SwingWorker worker1;
-   private SwingWorker worker2;
-   private SwingWorker worker3;
-   private SwingWorker worker4;
+   private ArrayList<MFGWorkerPanel> panels;
    private void computeAction() {
-      worker1.cancel(true);
-      if(enable1.isSelected())
-      {
-         worker1 = new WorkerStatCountM(container,result1,progressBar1);
-         worker1.execute();
-      }
-      else
-      {
-         result1.setText("");
-      }
-      worker2.cancel(true);
-      if(enable2.isSelected())
-      {
-         worker2 = new WorkerStatRatioM(container,result2,progressBar2);
-         worker2.execute();
-      }
-      else
-      {
-         result2.setText("");
-      }
-      worker3.cancel(true);
-      if(enable3.isSelected())
-      {
-         worker3 = new WorkerStatAPRIS(container,result3,progressBar3);
-         worker3.execute();
-      }
-      else
-      {
-         result3.setText("");
-      }
-      worker4.cancel(true);
-      if(enable4.isSelected())
-      {
-         worker4 = new WorkerStatHypoM(container,result4,progressBar4);
-         worker4.execute();
-      }
-      else
-      {
-         result4.setText("");
-      }
+      for(MFGWorkerPanel p : panels)
+         p.PerformComputation();
    }
 
    private JFrame frame;
@@ -124,22 +88,6 @@ public class MFG {
    private JPanel downPanel;
    private JCheckBox updateEveryStep;
    private JButton compute;
-   private JCheckBox enable1;
-   private JTextField result1;
-   private JProgressBar progressBar1;
-   private JPanel stat1;
-   private JPanel stat2;
-   private JCheckBox enable2;
-   private JTextField result2;
-   private JProgressBar progressBar2;
-   private JPanel stat3;
-   private JTextField result3;
-   private JProgressBar progressBar3;
-   private JCheckBox enable3;
-   private JPanel stat4;
-   private JCheckBox enable4;
-   private JTextField result4;
-   private JProgressBar progressBar4;
    private BMContainer container;
    private ArrayList<JButton> _buttonCache;
 

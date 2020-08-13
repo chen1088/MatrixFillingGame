@@ -4,8 +4,22 @@ import javax.swing.*;
 
 public class WorkerStatRatioM extends MFGSwingWorker{
 
-   public WorkerStatRatioM(BMContainer c, JTextField tf, JProgressBar pb) {
-      super(c, tf, pb);
+   public WorkerStatRatioM(BMContainer c) {
+      super(c);
+   }
+
+   @Override
+   public MFGSwingWorker Copy() {
+      WorkerStatRatioM ret = new WorkerStatRatioM(container);
+      ret.resultField = resultField;
+      ret.enable = enable;
+      ret.progressBar = progressBar;
+      return ret;
+   }
+
+   @Override
+   public void SetAppearance() {
+      enable.setText("RatioOfM");
    }
 
    @Override

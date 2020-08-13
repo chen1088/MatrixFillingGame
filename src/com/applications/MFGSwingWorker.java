@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public abstract class MFGSwingWorker extends SwingWorker<String,Object> {
+   public MFGWorkerPanel panel;
    public BMContainer container;
    public JTextField resultField;
    public JProgressBar progressBar;
+   public JCheckBox enable;
 
-   public MFGSwingWorker(BMContainer c, JTextField tf, JProgressBar pb)
+   public MFGSwingWorker(BMContainer c)
    {
       super();
       container = c;
-      resultField = tf;
-      progressBar = pb;
    }
    public void Publish(int percent)
    {
@@ -31,7 +31,9 @@ public abstract class MFGSwingWorker extends SwingWorker<String,Object> {
    @Override
    protected void done() {
       try {
-         if(!isCancelled())resultField.setText(get());
+         if(!isCancelled())
+            if(resultField != null)
+               resultField.setText(get());
       } catch (InterruptedException e) {
          e.printStackTrace();
       } catch (ExecutionException e) {
@@ -39,5 +41,8 @@ public abstract class MFGSwingWorker extends SwingWorker<String,Object> {
       }
       super.done();
    }
+
+   public abstract MFGSwingWorker Copy();
+   public abstract void SetAppearance();
 }
 

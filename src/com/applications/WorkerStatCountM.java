@@ -3,8 +3,22 @@ package com.applications;
 import javax.swing.*;
 
 public class WorkerStatCountM extends MFGSwingWorker{
-   public WorkerStatCountM(BMContainer c, JTextField tf, JProgressBar pb) {
-      super(c, tf, pb);
+   public WorkerStatCountM(BMContainer c) {
+      super(c);
+   }
+
+   @Override
+   public MFGSwingWorker Copy() {
+      MFGSwingWorker ret = new WorkerStatCountM(container);
+      ret.resultField = resultField;
+      ret.progressBar = progressBar;
+      ret.enable = enable;
+      return ret;
+   }
+
+   @Override
+   public void SetAppearance() {
+      enable.setText("CountOfM");
    }
 
    @Override

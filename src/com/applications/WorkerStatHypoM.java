@@ -4,8 +4,22 @@ import javax.swing.*;
 
 public class WorkerStatHypoM extends MFGSwingWorker{
 
-   public WorkerStatHypoM(BMContainer c, JTextField tf, JProgressBar pb) {
-      super(c, tf, pb);
+   public WorkerStatHypoM(BMContainer c) {
+      super(c);
+   }
+
+   @Override
+   public MFGSwingWorker Copy() {
+      WorkerStatHypoM ret = new WorkerStatHypoM(container);
+      ret.resultField = resultField;
+      ret.progressBar = progressBar;
+      ret.enable = enable;
+      return ret;
+   }
+
+   @Override
+   public void SetAppearance() {
+      enable.setText("Hypothesis");
    }
 
    @Override
