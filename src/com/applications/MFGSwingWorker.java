@@ -5,12 +5,19 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public abstract class MFGSwingWorker extends SwingWorker<String,Object> {
-   public MFGWorkerPanel panel;
    public BMContainer container;
    public JTextField resultField;
    public JProgressBar progressBar;
    public JCheckBox enable;
 
+   public MFGSwingWorker(BMContainer c, JTextField tf, JProgressBar pb, JCheckBox cb)
+   {
+      super();
+      container = c;
+      resultField = tf;
+      progressBar = pb;
+      enable = cb;
+   }
    public MFGSwingWorker(BMContainer c)
    {
       super();

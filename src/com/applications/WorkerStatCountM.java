@@ -6,14 +6,13 @@ public class WorkerStatCountM extends MFGSwingWorker{
    public WorkerStatCountM(BMContainer c) {
       super(c);
    }
-
+   public WorkerStatCountM(BMContainer c, JTextField tf, JProgressBar pb, JCheckBox cb)
+   {
+      super(c,tf,pb,cb);
+   }
    @Override
    public MFGSwingWorker Copy() {
-      MFGSwingWorker ret = new WorkerStatCountM(container);
-      ret.resultField = resultField;
-      ret.progressBar = progressBar;
-      ret.enable = enable;
-      return ret;
+      return new WorkerStatCountM(container,resultField,progressBar,enable);
    }
 
    @Override

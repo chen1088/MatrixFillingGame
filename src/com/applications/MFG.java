@@ -69,6 +69,7 @@ public class MFG {
             add(new MFGWorkerPanel(new WorkerStatRatioM(container),rightPanel));
             add(new MFGWorkerPanel(new WorkerStatAPRIS(container),rightPanel));
             add(new MFGWorkerPanel(new WorkerStatHypoM(container),rightPanel));
+            add(new MFGWorkerPanel(new WorkerStatCountOfBlank(container),rightPanel));
          }
       };
       RefreshGridPanel();

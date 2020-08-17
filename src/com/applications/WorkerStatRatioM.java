@@ -7,14 +7,13 @@ public class WorkerStatRatioM extends MFGSwingWorker{
    public WorkerStatRatioM(BMContainer c) {
       super(c);
    }
-
+   public WorkerStatRatioM(BMContainer c, JTextField tf, JProgressBar pb, JCheckBox cb)
+   {
+      super(c,tf,pb,cb);
+   }
    @Override
    public MFGSwingWorker Copy() {
-      WorkerStatRatioM ret = new WorkerStatRatioM(container);
-      ret.resultField = resultField;
-      ret.enable = enable;
-      ret.progressBar = progressBar;
-      return ret;
+      return new WorkerStatRatioM(container,resultField,progressBar,enable);
    }
 
    @Override

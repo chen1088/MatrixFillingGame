@@ -7,14 +7,14 @@ public class WorkerStatHypoM extends MFGSwingWorker{
    public WorkerStatHypoM(BMContainer c) {
       super(c);
    }
+   public WorkerStatHypoM(BMContainer c, JTextField tf, JProgressBar pb, JCheckBox cb)
+   {
+      super(c,tf,pb,cb);
+   }
 
    @Override
    public MFGSwingWorker Copy() {
-      WorkerStatHypoM ret = new WorkerStatHypoM(container);
-      ret.resultField = resultField;
-      ret.progressBar = progressBar;
-      ret.enable = enable;
-      return ret;
+      return new WorkerStatHypoM(container,resultField,progressBar,enable);
    }
 
    @Override
