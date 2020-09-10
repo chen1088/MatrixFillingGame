@@ -26,8 +26,9 @@ public class WorkerStatHypoM extends MFGSwingWorker{
    protected String doInBackground() {
       boolean[][] ignm = container.GetFullIgnoreMap();
       Integer[][] m = container.GetMaximalConf();
-      Integer[][] mfilled = BMUtil.GreedyFillMFG(m,container.Height(),container.Width());
-      boolean res = BMUtil.HasDiagRect_naive(mfilled,container.Height(),container.Width());
+      Integer[][] mfilled = BMUtil.GreedyFillMFG2(m,container.Height(),container.Width());
+      boolean res = BMUtil.HasBlank(mfilled,container.Height(),container.Width());
+      //boolean res = BMUtil.HasDiagRect_naive(mfilled,container.Height(),container.Width());
       return !res ? "Works" : "Fails";
    }
 }
