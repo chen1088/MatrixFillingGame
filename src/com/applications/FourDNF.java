@@ -13,11 +13,13 @@ public class FourDNF {
       for(Clause c : clauses)
       {
          boolean temp = true;
-         for(Literal l : c.literals)
+         for(Integer l : c.literals)
          {
             if (!temp) break;
-            boolean lval = (l.varidx < values.length) && values[l.varidx];
-            temp = l.neg != lval;
+            int varidx = Math.abs(l) - 1;
+            boolean neg = varidx < 0;
+            boolean lval = (varidx < values.length) && values[varidx];
+            temp = neg != lval;
          }
          if (temp) return true;
       }
@@ -110,10 +112,12 @@ public class FourDNF {
          // pick a clause
          int cind = gen.nextInt(clauses.size());
          HashSet<Integer> lset = new HashSet<>();
-         for(Literal l: clauses.get(cind).literals)
+         for(Integer l: clauses.get(cind).literals)
          {
-            lset.add(l.varidx);
-            tmpvar[l.varidx] = !l.neg;
+            int varidx = Math.abs(l) - 1;
+            boolean neg = varidx < 0;
+            lset.add(varidx);
+            tmpvar[varidx] = !neg;
          }
          for(int i = 0;i<varsize;++i)
          {
@@ -124,11 +128,13 @@ public class FourDNF {
          for(int i = 0;i<cind;++i)
          {
             boolean temp = true;
-            for(Literal l : clauses.get(i).literals)
+            for(Integer l : clauses.get(i).literals)
             {
                if (!temp) break;
-               boolean lval = (l.varidx < varsize) ? tmpvar[l.varidx] : false;
-               temp = l.neg != lval;
+               int varidx = Math.abs(l) - 1;
+               boolean neg = varidx < 0;
+               boolean lval = (varidx < varsize) ? tmpvar[varidx] : false;
+               temp = neg != lval;
             }
             if (temp)
                inch = false;
@@ -169,16 +175,20 @@ public class FourDNF {
    {
       int vars = 0;
       for (Clause c : clauses)
-         for (Literal l : c.literals)
+         for (Integer l : c.literals)
          {
-            vars = Math.max(vars, l.varidx + 1);
+            int varidx = Math.abs(l) - 1;
+            boolean neg = varidx < 0;
+            vars = Math.max(vars, varidx + 1);
          }
 
       boolean[] vs = new boolean[vars];
       for(Clause c: clauses)
-         for(Literal l: c.literals)
+         for(Integer l: c.literals)
          {
-            vs[l.varidx] = true;
+            int varidx = Math.abs(l) - 1;
+            boolean neg = varidx < 0;
+            vs[varidx] = true;
          }
       HashMap<Integer,Integer> nmap = new HashMap<>();
       int space = 0;
@@ -195,9 +205,11 @@ public class FourDNF {
       }
       varsize = vars - space;
       for(Clause c: clauses)
-         for(Literal l:c.literals)
+         for(Integer l:c.literals)
          {
-            l.varidx = nmap.get(l.varidx);
+            int varidx = Math.abs(l) - 1;
+            boolean neg = varidx < 0;
+            varidx = nmap.get(varidx);
          }
    }
 }

@@ -406,7 +406,7 @@ public class BMContainer {
       FourDNF ret = new FourDNF();
       //index of vars
       Integer[][] ids = new Integer[height][width];
-      Integer c = 0;
+      Integer c = 1;
       for (int i = 0; i < height; ++i)
          for (int j = 0; j < width; ++j)
          {
@@ -438,19 +438,19 @@ public class BMContainer {
                      Clause clause = new Clause();
                      if(m[i][j] == 2)
                      {
-                        clause.literals.add(new Literal(ids[i][j], false));
+                        clause.literals.add(ids[i][j]);
                      }
                      if(m[i][l] == 2)
                      {
-                        clause.literals.add(new Literal(ids[i][l], true));
+                        clause.literals.add(-ids[i][l]);
                      }
                      if(m[k][j] == 2)
                      {
-                        clause.literals.add(new Literal(ids[k][j], true));
+                        clause.literals.add(-ids[k][j]);
                      }
                      if(m[k][l] == 2)
                      {
-                        clause.literals.add(new Literal(ids[k][l], false));
+                        clause.literals.add(ids[k][l]);
                      }
                      ret.clauses.add(clause);
                   }
