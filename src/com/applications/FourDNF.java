@@ -17,7 +17,7 @@ public class FourDNF {
          {
             if (!temp) break;
             int varidx = Math.abs(l) - 1;
-            boolean neg = varidx < 0;
+            boolean neg = l < 0;
             boolean lval = (varidx < values.length) && values[varidx];
             temp = neg != lval;
          }
@@ -115,7 +115,7 @@ public class FourDNF {
          for(Integer l: clauses.get(cind).literals)
          {
             int varidx = Math.abs(l) - 1;
-            boolean neg = varidx < 0;
+            boolean neg = l < 0;
             lset.add(varidx);
             tmpvar[varidx] = !neg;
          }
@@ -132,7 +132,7 @@ public class FourDNF {
             {
                if (!temp) break;
                int varidx = Math.abs(l) - 1;
-               boolean neg = varidx < 0;
+               boolean neg = l < 0;
                boolean lval = (varidx < varsize) ? tmpvar[varidx] : false;
                temp = neg != lval;
             }
@@ -178,7 +178,6 @@ public class FourDNF {
          for (Integer l : c.literals)
          {
             int varidx = Math.abs(l) - 1;
-            boolean neg = varidx < 0;
             vars = Math.max(vars, varidx + 1);
          }
 
@@ -187,7 +186,6 @@ public class FourDNF {
          for(Integer l: c.literals)
          {
             int varidx = Math.abs(l) - 1;
-            boolean neg = varidx < 0;
             vs[varidx] = true;
          }
       HashMap<Integer,Integer> nmap = new HashMap<>();
@@ -208,8 +206,11 @@ public class FourDNF {
          for(Integer l:c.literals)
          {
             int varidx = Math.abs(l) - 1;
-            boolean neg = varidx < 0;
             varidx = nmap.get(varidx);
          }
+   }
+   public void ToTextField()
+   {
+
    }
 }

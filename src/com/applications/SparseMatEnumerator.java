@@ -3,43 +3,35 @@ package com.applications;
 import java.util.ArrayList;
 
 public class SparseMatEnumerator {
-   private Integer k;
-   private ArrayList<Integer[]> mat;
-   private Integer rightmost;
+   private int k;
+   private int[][] mat;
+   private int rightmost;
    public boolean IsEnd;
    public SparseMatEnumerator(Integer sparsity)
    {
       IsEnd = false;
       k = sparsity;
       rightmost = k - 1;
-//      rightmost = 1;
-      mat = new ArrayList<>();
+      mat = new int[k][2];
       for(int i = 0;i<k;++i)
       {
-         Integer[] e = new Integer[2];
-         e[0] = 0;
-         e[1] = i;
-         mat.add(e);
+         mat[i][1] = i;
       }
-//      Integer[] e = new Integer[2];
-//      Integer[] e1 = new Integer[2];
-//      Integer[] e2 = new Integer[2];
-//      e[0] = 0;e[1] = 0;
-//      e1[0] = 1;e1[1] = 0;
-//      e2[0] = 1;e2[1] = 1;
-//      mat.add(e);
-//      mat.add(e1);
-//      mat.add(e2);
+      
    }
-   public ArrayList<Integer[]> Next()
+   public int[][] Next2()
    {
-      ArrayList<Integer[]> ret = new ArrayList<>();
+      
+      return mat;
+   }
+   public int[][] Next()
+   {
       boolean[] colflag = new boolean[rightmost+1];
       boolean[] colflag2 = new boolean[rightmost+1];
       int emptycol = rightmost+1;
       int emptycol2 = rightmost+1;
       int lastrow = -1;
-      int entryofmodification = -1;
+      int p = -1;
       for(int i = 0;i<k;++i)
       {
          if(emptycol == k-i)
@@ -54,29 +46,29 @@ public class SparseMatEnumerator {
                   break;
                }
             }
-            if(mat.get(i)[0] != lastrow + 1 || mat.get(i)[1] != lastcol)
+            if(mat[i][0] != lastrow + 1 || mat[i][1] != lastcol)
             {
-               entryofmodification = i;
+               p = i;
             }
          }
          else
          {
             // can fill any columns
-            if(mat.get(i)[0] != lastrow + 1 || mat.get(i)[1] != rightmost)
+            if(mat[i][0] != lastrow + 1 || mat[i][1] != rightmost)
             {
-               entryofmodification = i;
+               p = i;
             }
          }
          // fill the entry
-         if(!colflag[mat.get(i)[1]])
+         if(!colflag[mat[i][1]])
          {
-            colflag[mat.get(i)[1]] = true;
+            colflag[mat[i][1]] = true;
             emptycol--;
          }
-         lastrow = mat.get(i)[0];
+         lastrow = mat[i][0];
       }
 
-      if(entryofmodification == -1)
+      if(p == -1)
       {
          if(rightmost == 0)
          {
@@ -84,41 +76,35 @@ public class SparseMatEnumerator {
             return mat;
          }
          // this happens if the configuration is the last one of rightmost n
-         mat.clear();
          rightmost--;
          for(int i = 0;i<k;++i)
          {
-            Integer[] e = new Integer[2];
-            e[0] = i / (rightmost + 1);
-            e[1] = i % (rightmost + 1);
-            mat.add(e);
+            mat[i][0] = i/(rightmost+1);
+            mat[i][1] = i%(rightmost+1);
          }
          return mat;
       }
 
-      for(int i = 0;i<entryofmodification;++i)
+      for(int i = 0;i<p;++i)
       {
-         ret.add(mat.get(i));
-         if(!colflag2[mat.get(i)[1]]) {
-            colflag2[mat.get(i)[1]] = true;
+         if(!colflag2[mat[i][1]]) {
+            colflag2[mat[i][1]] = true;
             emptycol2--;
          }
       }
       int lastrow2 = -1;
       int lastcol2 = -1;
-      if(emptycol2 == k-entryofmodification)
+      if(emptycol2 == k-p)
       {
          boolean added = false;
-         int c = mat.get(entryofmodification)[1];
-         int r = mat.get(entryofmodification)[0];
+         int c = mat[p][1];
+         int r = mat[p][0];
          for(int j = c+1;j<rightmost+1;++j)
          {
             if(!colflag2[j])
             {
-               Integer[] e = new Integer[2];
-               e[0] = r;
-               e[1] = j;
-               ret.add(e);
+               mat[p][0] = r;
+               mat[p][1] = j;
                colflag2[j] = true;
                emptycol2--;
                added = true;
@@ -133,10 +119,8 @@ public class SparseMatEnumerator {
             {
                if(!colflag2[j])
                {
-                  Integer[] e = new Integer[2];
-                  e[0] = r + 1;
-                  e[1] = j;
-                  ret.add(e);
+                  mat[p][0] = r+1;
+                  mat[p][1] = j;
                   colflag2[j] = true;
                   emptycol2--;
                   lastrow2 = r + 1;
@@ -148,14 +132,12 @@ public class SparseMatEnumerator {
       }
       else
       {
-         int c = mat.get(entryofmodification)[1];
-         int r = mat.get(entryofmodification)[0];
-         Integer[] e = new Integer[2];
+         int c = mat[p][1];
+         int r = mat[p][0];
          if(c == rightmost)
          {
-            e[0] = r+1;
-            e[1] = 0;
-            ret.add(e);
+            mat[p][0] = r+1;
+            mat[p][1] = 0;
             if(!colflag2[0])
             {
                colflag2[0] = true;
@@ -166,9 +148,8 @@ public class SparseMatEnumerator {
          }
          else
          {
-            e[0] = r;
-            e[1] = c+1;
-            ret.add(e);
+            mat[p][0] = r;
+            mat[p][1] = c+1;
             if(!colflag2[c+1])
             {
                colflag2[c+1] = true;
@@ -178,7 +159,7 @@ public class SparseMatEnumerator {
             lastcol2 = c+1;
          }
       }
-      for(int i = entryofmodification+1;i<k;++i)
+      for(int i = p+1;i<k;++i)
       {
          int c = lastcol2;
          int r = lastrow2;
@@ -190,10 +171,8 @@ public class SparseMatEnumerator {
             {
                if(!colflag2[j])
                {
-                  Integer[] e = new Integer[2];
-                  e[0] = r;
-                  e[1] = j;
-                  ret.add(e);
+                  mat[i][0] = r;
+                  mat[i][1] = j;
                   colflag2[j] = true;
                   emptycol2--;
                   lastrow2 = r;
@@ -208,10 +187,8 @@ public class SparseMatEnumerator {
             {
                if(!colflag2[j])
                {
-                  Integer[] e = new Integer[2];
-                  e[0] = r + 1;
-                  e[1] = j;
-                  ret.add(e);
+                  mat[i][0] = r+1;
+                  mat[i][1] = j;
                   lastcol2 = j;
                   lastrow2 = r+1;
                   colflag2[j] = true;
@@ -222,14 +199,12 @@ public class SparseMatEnumerator {
          }
          else
          {
-            Integer[] e = new Integer[2];
             if(c == rightmost)
             {
-               e[0] = r+1;
-               e[1] = 0;
                lastcol2 = 0;
                lastrow2 = r+1;
-               ret.add(e);
+               mat[i][0] = r+1;
+               mat[i][1] = 0;
                if(!colflag2[0])
                {
                   colflag2[0] = true;
@@ -238,11 +213,10 @@ public class SparseMatEnumerator {
             }
             else
             {
-               e[0] = r;
-               e[1] = c+1;
                lastcol2 = c+1;
                lastrow2 = r;
-               ret.add(e);
+               mat[i][0] = r;
+               mat[i][1] = c+1;
                if(!colflag2[c+1])
                {
                   colflag2[c+1] = true;
@@ -251,55 +225,164 @@ public class SparseMatEnumerator {
             }
          }
       }
-      mat = ret;
-      return ret;
+      return mat;
    }
-   public static boolean[][] SparseToFull(ArrayList<Integer[]> m)
-   {
-      int r = 1;
-      int c = 1;
-      for(int i = 0;i<m.size();++i)
-      {
-         r = Math.max(m.get(i)[0],r);
-         c = Math.max(m.get(i)[1],c);
-      }
-      boolean[][] ret = new boolean[r][c];
-      for(int i = 0;i<m.size();++i)
-      {
-         Integer[] e = m.get(i);
-         ret[e[0]][e[1]] = true;
-      }
-      return ret;
-   }
-   public static void Display(ArrayList<Integer[]> m)
+   public static int[][] SparseToFull(int[][] m)
    {
       int r = 0;
       int c = 0;
-      for(int i = 0;i<m.size();++i)
+      for(int i = 0;i<m.length;++i)
       {
-         r = Math.max(m.get(i)[0],r);
-         c = Math.max(m.get(i)[1],c);
+         r = Math.max(m[i][0],r);
+         c = Math.max(m[i][1],c);
+      }
+      int h = r+1;
+      int w = c+1;
+      int[][] ret = new int[h][w];
+      for(int i = 0;i<h;++i)
+         for(int j = 0;j<w;++j)
+            ret[i][j] = 2;
+      for(int i = 0;i<m.length;++i)
+      {
+         int[] e = m[i];
+         ret[e[0]][e[1]] = 1;
+      }
+      return ret;
+   }
+   public static void Display(int[][] m)
+   {
+      int r = 0;
+      int c = 0;
+      for(int i = 0;i<m.length;++i)
+      {
+         r = Math.max(m[i][0],r);
+         c = Math.max(m[i][1],c);
       }
       r++;
       c++;
       boolean[][] ret = new boolean[r][c];
-      for(int i = 0;i<m.size();++i)
+      for(int i = 0;i<m.length;++i)
       {
-         Integer[] e = m.get(i);
+         int[] e = m[i];
          ret[e[0]][e[1]] = true;
       }
       for(int i = 0;i<r;++i) {
          for (int j = 0; j < c; ++j) {
-            System.out.print((ret[i][j]?'1':'0') + " ");
+            System.out.print((ret[i][j]?'1':' ') + " ");
          }
          System.out.print("\n");
       }
    }
+   public int[] Score()
+   {
+      int[] ret = new int[2];
+      int h = mat[k-1][0] + 1;
+      int w = rightmost + 1;
+      int[][] dense = new int[h][w];
+      for(int i = 0;i<h;++i)
+         for(int j = 0;j<w;++j)
+            dense[i][j] = 2;
+      for(int i = 0;i<k;++i)
+      {
+         dense[mat[i][0]][mat[i][1]] = 1;
+      }
+
+      boolean[][] zeroimp = new boolean[h][w];
+      boolean[][] g1map = new boolean[w][w];//12
+      boolean[][] g2map = new boolean[w][w];//21
+      for (int i = 0; i < h; ++i)
+         for (int j = 0; j < w; ++j)
+            for (int k = j + 1; k < w; ++k)
+            {
+               if (dense[i][j] == 1 && dense[i][k] == 2)
+               {
+                  g1map[j][k] = true;
+               }
+               else if (dense[i][j] == 2 && dense[i][k] == 1 && g1map[j][k])
+               {
+                  zeroimp[i][j] = true;
+               }
+            }
+      for (int i = h - 1; i >= 0; --i)
+         for (int j = 0; j < w; ++j)
+            for (int k = j + 1; k < w; ++k)
+            {
+               if (dense[i][j] == 2 && dense[i][k] == 1)
+               {
+                  g2map[j][k] = true;
+               }
+               else if (dense[i][j] == 1 && dense[i][k] == 2 && g2map[j][k])
+               {
+                  zeroimp[i][k] = true;
+               }
+            }
+      for (int i = 0; i < h; ++i)
+         for (int j = 0; j < w; ++j)
+            if (!zeroimp[i][j] && dense[i][j] == 2)
+               dense[i][j] = 0;
+      //
+      int Bcount = 0;
+      int B0count = 0;
+      for(int i = 0;i<h;++i)
+         for(int j = 0;j<w;++j)
+            if(dense[i][j] == 2)
+               Bcount++;
+      boolean[][] oneimpmap = new boolean[h][w];
+      boolean[][] h1map = new boolean[w][w];
+      boolean[][] h2map = new boolean[w][w];
+      for(int i = 0;i<h;++i)
+         for(int j = 0;j<w;++j)
+            for(int k = j+1;k<w;++k)
+            {
+               if(dense[i][j] == 2 && dense[i][k] == 0)
+                  h1map[j][k] = true;
+               else if(dense[i][j] == 0 && dense[i][k] == 2 && h1map[j][k])
+                  oneimpmap[i][k] = true;
+            }
+      for(int i = h - 1;i>=0;--i)
+         for(int j = 0;j<w;++j)
+            for(int k = j+1;k<w;++k)
+            {
+               if(dense[i][j] == 0 && dense[i][k] == 2)
+                  h2map[j][k] = true;
+               else if(dense[i][j] == 2 && dense[i][k] == 0 && h2map[j][k])
+                  oneimpmap[i][j] = true;
+            }
+      for(int i = 0;i<h;++i)
+         for(int j = 0;j<w;++j)
+            if(oneimpmap[i][j])
+               B0count++;
+      ret[0] = B0count;
+      ret[1] = Bcount;
+      return ret;
+   }
+   public int ScoreNew()
+   {
+      //assume that the ratio is 1
+      int ret = 0;
+
+      return ret;
+   }
+   public static int EditDistance(int[][] p,int[][] q)
+   {
+      int ret = 0;
+
+      return ret;
+   }
    public static void main(String[] args){
-      SparseMatEnumerator e = new SparseMatEnumerator(8);
+      SparseMatEnumerator e = new SparseMatEnumerator(9);
       int count = 0;
+      double maxratio = 0.0;
       while(!e.IsEnd)
       {
+         int[] tmp = e.Score();
+         double ratio = (double)tmp[0]/tmp[1];
+         if(ratio>maxratio)
+         {
+            maxratio = ratio;
+            Display(e.mat);
+            System.out.printf("ratio: %f\n",ratio);
+         }
          count++;
          //Display(e.mat);
          //System.out.print("\n");

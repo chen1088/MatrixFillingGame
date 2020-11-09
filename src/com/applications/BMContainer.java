@@ -397,7 +397,7 @@ public class BMContainer {
       for (int i = 0; i < height; ++i)
          for (int j = 0; j < width; ++j)
             if (!zeroimp[i][j] && ret[i][j] == 2)
-      ret[i][j] = 0;
+               ret[i][j] = 0;
       return ret;
    }
 
