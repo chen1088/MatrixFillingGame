@@ -7,14 +7,14 @@ public class WorkerStatHypoM extends MFGSwingWorker{
    public WorkerStatHypoM(BMContainer c) {
       super(c);
    }
-   public WorkerStatHypoM(BMContainer c, JTextField tf, JProgressBar pb, JCheckBox cb)
+   public WorkerStatHypoM(BMContainer c, JTextPane tf, JProgressBar pb, JCheckBox cb, JPanel rp)
    {
-      super(c,tf,pb,cb);
+      super(c,tf,pb,cb,rp);
    }
 
    @Override
    public MFGSwingWorker Copy() {
-      return new WorkerStatHypoM(container,resultField,progressBar,enable);
+      return new WorkerStatHypoM(container,resultField,progressBar,enable, subPanel);
    }
 
    @Override

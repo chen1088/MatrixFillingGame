@@ -6,13 +6,13 @@ public class WorkerStatCountOfBlank extends MFGSwingWorker {
    public WorkerStatCountOfBlank(BMContainer c) {
       super(c);
    }
-   public WorkerStatCountOfBlank(BMContainer c, JTextField tf, JProgressBar pb, JCheckBox cb)
+   public WorkerStatCountOfBlank(BMContainer c, JTextPane tf, JProgressBar pb, JCheckBox cb,JPanel rp)
    {
-      super(c,tf,pb,cb);
+      super(c,tf,pb,cb,rp);
    }
    @Override
    public MFGSwingWorker Copy() {
-      return new WorkerStatCountOfBlank(container,resultField,progressBar,enable);
+      return new WorkerStatCountOfBlank(container,resultField,progressBar,enable, subPanel);
    }
 
    @Override

@@ -47,9 +47,27 @@
             <properties>
               <font size="24"/>
               <horizontalAlignment value="10"/>
-              <text value="Press Z to revert"/>
+              <text value="CNF:"/>
             </properties>
           </component>
+          <scrollpane id="c8a08">
+            <constraints/>
+            <properties>
+              <autoscrolls value="true"/>
+              <preferredSize width="500" height="200"/>
+              <verticalScrollBarPolicy value="22"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="6231d" class="javax.swing.JTextPane" binding="cnfstr">
+                <constraints/>
+                <properties>
+                  <preferredSize width="500" height="200"/>
+                  <text value="sample"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
         </children>
       </grid>
     </children>

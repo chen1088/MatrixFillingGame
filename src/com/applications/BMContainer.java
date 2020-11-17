@@ -458,6 +458,56 @@ public class BMContainer {
          }
       return ret;
    }
+   public FourDNF ConvertToDNF(Integer[][] m)
+   {
+      FourDNF ret = new FourDNF();
+      //index of vars
+      Integer[][] ids = new Integer[height][width];
+      Integer c = 1;
+      for (int i = 0; i < height; ++i)
+         for (int j = 0; j < width; ++j)
+         {
+            ids[i][j] = -1;
+            if (m[i][j] == 2)
+            {
+               ids[i][j] = c;
+               ++c;
+            }
+         }
+
+      for(int i = 0; i<height; ++i)
+         for(int j = 0; j<width; ++j)
+         {
+            for(int k = i+1; k<height; ++k)
+               for(int l = j + 1; l<width; ++l)
+               {
+                  // [ij][il]
+                  // [kj][kl]
+                  if(m[i][j] != 0 && m[i][l] != 1 && m[k][j] != 1 && m[k][l] != 0)
+                  {
+                     Clause clause = new Clause();
+                     if(m[i][j] == 2)
+                     {
+                        clause.literals.add(ids[i][j]);
+                     }
+                     if(m[i][l] == 2)
+                     {
+                        clause.literals.add(-ids[i][l]);
+                     }
+                     if(m[k][j] == 2)
+                     {
+                        clause.literals.add(-ids[k][j]);
+                     }
+                     if(m[k][l] == 2)
+                     {
+                        clause.literals.add(ids[k][l]);
+                     }
+                     ret.clauses.add(clause);
+                  }
+               }
+         }
+      return ret;
+   }
    public void Revert()
    {
       if (matrixhistory.size() <= 0) return;

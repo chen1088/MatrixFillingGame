@@ -70,7 +70,7 @@ public class MFG {
             add(new MFGWorkerPanel(new WorkerStatAPRIS(container),rightPanel));
             add(new MFGWorkerPanel(new WorkerStatHypoM(container),rightPanel));
             add(new MFGWorkerPanel(new WorkerStatCountOfBlank(container),rightPanel));
-            add(new MFGWorkerPanel(new WorkerStatCNFStr(container),rightPanel));
+            //add(new MFGWorkerPanel(new WorkerStatCNFStr(container),rightPanel));
          }
       };
       RefreshGridPanel();
@@ -90,20 +90,24 @@ public class MFG {
    private JPanel downPanel;
    private JCheckBox updateEveryStep;
    private JButton compute;
+   private JTextPane cnfstr;
    private BMContainer container;
    private ArrayList<JButton> _buttonCache;
 
    private void RefreshGridPanel()
    {
       RefreshMatPanel(gridPanel);
+      RefreshCNFPanel();
       if(updateEveryStep.isSelected())
          computeAction();
       frame.pack();
       frame.requestFocusInWindow();
    }
-   private void MakeStatsPanel()
+   private void RefreshCNFPanel()
    {
-
+      Integer[][] m = container.GetMaximalConf();
+      FourDNF dnf = container.ConvertToDNF(m);
+      dnf.ToTextPane(cnfstr);
    }
    private void RefreshMatPanel(JPanel pane)
    {

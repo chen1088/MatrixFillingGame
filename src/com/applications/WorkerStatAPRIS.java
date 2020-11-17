@@ -7,14 +7,14 @@ public class WorkerStatAPRIS extends MFGSwingWorker{
    public WorkerStatAPRIS(BMContainer c) {
       super(c);
    }
-   public WorkerStatAPRIS(BMContainer c, JTextField tf, JProgressBar pb, JCheckBox cb)
+   public WorkerStatAPRIS(BMContainer c, JTextPane tf, JProgressBar pb, JCheckBox cb,JPanel rp)
    {
-      super(c,tf,pb,cb);
+      super(c,tf,pb,cb,rp);
    }
 
    @Override
    public MFGSwingWorker Copy() {
-      return new WorkerStatAPRIS(container,resultField,progressBar,enable);
+      return new WorkerStatAPRIS(container,resultField,progressBar,enable, subPanel);
    }
 
    @Override

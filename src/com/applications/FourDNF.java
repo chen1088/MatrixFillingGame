@@ -1,5 +1,8 @@
 package com.applications;
 
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -209,8 +212,49 @@ public class FourDNF {
             varidx = nmap.get(varidx);
          }
    }
-   public void ToTextField()
-   {
+   public void ToTextPane(JTextPane pane) {
+      // Create the StyleContext, the document and the pane
+      StyleContext sc = new StyleContext();
+      final DefaultStyledDocument doc = new DefaultStyledDocument(sc);
+      pane.setDocument(doc);
+      //JTextPane pane = new JTextPane(doc);
+      // Create and add the style
+      final Style redStyle = sc.addStyle("RED", null);
+      redStyle.addAttribute(StyleConstants.Foreground, Color.red);
+      redStyle.addAttribute(StyleConstants.FontSize, new Integer(16));
+
+      final Style blueStyle = sc.addStyle("BLUE", null);
+      blueStyle.addAttribute(StyleConstants.Foreground, Color.blue);
+      blueStyle.addAttribute(StyleConstants.FontSize, new Integer(14));
+      blueStyle.addAttribute(StyleConstants.Bold, new Boolean(true));
+
+      final Style olStyle = sc.addStyle("overline",null);
+      olStyle.addAttribute(StyleConstants.FontSize,16);
+      olStyle.addAttribute(StyleConstants.Underline,true);
+
+//      String[] text = { "1a", "0b", "0c", "0d", "1e", "1f", "1g", "0h", "1i" };
+//      for(int j = 0;j<100;++j) {
+//         for (int i = 0; i < text.length; i++) {
+//            String s = text[i];
+//
+//            // Finally, apply the style to the heading
+//            int start = pane.getText().length();
+//            Style style = null;
+//            if (i % 2 == 0) {
+//               style = olStyle;
+//            } else {
+//               style = blueStyle;
+//            }
+//            // Add the text to the document
+//            try{
+//               doc.insertString(start, s + " ", style);
+//            }
+//            catch(BadLocationException e)
+//            {
+//               System.out.print("cannot write cnfstr!");
+//            }
+//         }
+//      }
 
    }
 }
