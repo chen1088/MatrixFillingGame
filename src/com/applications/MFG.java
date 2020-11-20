@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MFG {
    public static void main(String[] args) {
@@ -107,7 +106,7 @@ public class MFG {
    {
       Integer[][] m = container.GetMaximalConf();
       FourDNF dnf = container.ConvertToDNF(m);
-      dnf.ToTextPane(cnfstr);
+      dnf.ToTextPaneAsCNFStr(cnfstr);
    }
    private void RefreshMatPanel(JPanel pane)
    {

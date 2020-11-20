@@ -2,7 +2,6 @@ package com.applications;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.concurrent.ExecutionException;
 
 public class WorkerStatCNFStr extends MFGSwingWorker {
    public JScrollPane scrollPane;
@@ -51,7 +50,7 @@ public class WorkerStatCNFStr extends MFGSwingWorker {
    {
       if(!isCancelled())
          if(resultField != null)
-            dnf.ToTextPane(resultField);
+            dnf.ToTextPaneAsCNFStr(resultField);
       super.done();
    }
 }

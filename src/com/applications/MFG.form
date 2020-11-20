@@ -54,7 +54,7 @@
             <constraints/>
             <properties>
               <autoscrolls value="true"/>
-              <preferredSize width="500" height="200"/>
+              <preferredSize width="550" height="200"/>
               <verticalScrollBarPolicy value="22"/>
             </properties>
             <border type="none"/>
@@ -62,7 +62,7 @@
               <component id="6231d" class="javax.swing.JTextPane" binding="cnfstr">
                 <constraints/>
                 <properties>
-                  <preferredSize width="500" height="200"/>
+                  <preferredSize width="550" height="200"/>
                   <text value="sample"/>
                 </properties>
               </component>

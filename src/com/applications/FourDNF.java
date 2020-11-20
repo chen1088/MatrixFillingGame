@@ -1,5 +1,7 @@
 package com.applications;
 
+import com.sun.mail.iap.Literal;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -212,49 +214,55 @@ public class FourDNF {
             varidx = nmap.get(varidx);
          }
    }
-   public void ToTextPane(JTextPane pane) {
+   public void ToTextPaneAsCNFStr(JTextPane pane) {
       // Create the StyleContext, the document and the pane
       StyleContext sc = new StyleContext();
+      TabStop[] tabs = new TabStop[5];
+      tabs[0] = new TabStop(100, TabStop.ALIGN_LEFT, TabStop.LEAD_NONE);
+      tabs[1] = new TabStop(200, TabStop.ALIGN_LEFT, TabStop.LEAD_NONE);
+      tabs[2] = new TabStop(300, TabStop.ALIGN_LEFT, TabStop.LEAD_NONE);
+      tabs[3] = new TabStop(400, TabStop.ALIGN_LEFT, TabStop.LEAD_NONE);
+      tabs[4] = new TabStop(500, TabStop.ALIGN_LEFT, TabStop.LEAD_NONE);
+      TabSet tabset = new TabSet(tabs);
+      AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.TabSet, tabset);
       final DefaultStyledDocument doc = new DefaultStyledDocument(sc);
+      doc.setParagraphAttributes(0,0,aset,false);
       pane.setDocument(doc);
-      //JTextPane pane = new JTextPane(doc);
       // Create and add the style
-      final Style redStyle = sc.addStyle("RED", null);
-      redStyle.addAttribute(StyleConstants.Foreground, Color.red);
-      redStyle.addAttribute(StyleConstants.FontSize, new Integer(16));
 
-      final Style blueStyle = sc.addStyle("BLUE", null);
-      blueStyle.addAttribute(StyleConstants.Foreground, Color.blue);
-      blueStyle.addAttribute(StyleConstants.FontSize, new Integer(14));
-      blueStyle.addAttribute(StyleConstants.Bold, new Boolean(true));
+      final Style pstyle = sc.addStyle("pos",null);
+      pstyle.addAttribute(StyleConstants.FontSize, 16);
+      pstyle.addAttribute(StyleConstants.Foreground, Color.red);
 
-      final Style olStyle = sc.addStyle("overline",null);
-      olStyle.addAttribute(StyleConstants.FontSize,16);
-      olStyle.addAttribute(StyleConstants.Underline,true);
+      final Style nstyle = sc.addStyle("neg", null);
+      nstyle.addAttribute(StyleConstants.FontSize, 16);
+      nstyle.addAttribute(StyleConstants.Foreground, Color.blue);
+      nstyle.addAttribute(StyleConstants.Underline, true);
 
-//      String[] text = { "1a", "0b", "0c", "0d", "1e", "1f", "1g", "0h", "1i" };
-//      for(int j = 0;j<100;++j) {
-//         for (int i = 0; i < text.length; i++) {
-//            String s = text[i];
-//
-//            // Finally, apply the style to the heading
-//            int start = pane.getText().length();
-//            Style style = null;
-//            if (i % 2 == 0) {
-//               style = olStyle;
-//            } else {
-//               style = blueStyle;
-//            }
-//            // Add the text to the document
-//            try{
-//               doc.insertString(start, s + " ", style);
-//            }
-//            catch(BadLocationException e)
-//            {
-//               System.out.print("cannot write cnfstr!");
-//            }
-//         }
-//      }
+      for(int i = 0;i<clauses.size();++i)
+      {
+         Clause c = clauses.get(i);
+         ArrayList<Integer> ls = c.literals;
+         for(int j = 0;j<ls.size();++j)
+         {
+            String nstr = Integer.toString(Math.abs(ls.get(j)));
+            Style sty = ls.get(j) < 0?pstyle:nstyle;
 
+            try{
+               doc.insertString(doc.getLength(),nstr,sty);
+               doc.insertString(doc.getLength()," ",null);
+            }catch (BadLocationException e)
+            {
+               System.out.print("!\n");
+            }
+         }
+         try {
+            doc.insertString(doc.getLength(),i%5!=4?"\t":"\n",null);
+
+         }catch (BadLocationException e)
+         {
+
+         }
+      }
    }
 }
