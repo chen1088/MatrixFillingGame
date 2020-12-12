@@ -47,13 +47,15 @@ public class DFA {
    public void SetTransition(Transition tran)
    {
       int m = Integer.max(tran.statep, tran.stateq);
-      if(m>=statecount)
+      if(m>=transfunc.length)
       {
          int[][] transfuncnew = new int[m+1][alphabetsize];
          for(int i = 0;i< statecount;++i)
             for(int j = 0;j<alphabetsize;++j)
                transfuncnew[i][j] = transfunc[i][j];
          transfunc = transfuncnew;
+         statecount = m+1;
+         trimmed = false;
       }
       transfunc[tran.statep][tran.alpha] = tran.stateq;
    }
@@ -74,9 +76,21 @@ public class DFA {
    }
    public void SetAcceptingState(int state, boolean isacc)
    {
-      if(state >= statecount) return;
+      if(state >= accstates.length)
+      {
+         boolean[] newaccstates = new boolean[state+1];
+         for(int i = 0;i<accstates.length;++i)
+            newaccstates[i] = accstates[i];
+         accstates = newaccstates;
+      }
       accstates[state] = isacc;
    }
+   public boolean IsAccepting(int state)
+   {
+      if(state>=accstates.length) return false;
+      else return accstates[state];
+   }
+
    public DFA Trim()
    {
       if(trimmed) return this;
@@ -120,7 +134,7 @@ public class DFA {
          for (int j = 0; j < alphabetsize; ++j){
             if(!reachable[i]) continue;
             newtrans[idxmap[i]][j] = idxmap[transfunc[i][j]];
-            newacc[idxmap[i]] = accstates[i];
+            newacc[idxmap[i]] = IsAccepting(i);
          }
       return new DFA(newtrans,newacc,true);
    }
@@ -367,8 +381,35 @@ public class DFA {
    }
    public DFA Intersects(DFA other)
    {
+      LinkedList<int[]> queue = new LinkedList<>();
+      Set<Integer> visited = new HashSet<>();
+      DFA ret = new DFA(1,2);
+      visited.add(0);
+      queue.add(new int[]{0,0});
+      while(!queue.isEmpty())
+      {
+         int[] pair = queue.poll();
+         int p1 = pair[0];
+         int p2 = pair[1];
+         int p1p2 = Util.PairingFunction(p1,p2);
+         if(accstates[p1] && other.accstates[p2])
+            ret.SetAcceptingState(p1p2,true);
+         for(int i = 0;i<alphabetsize;++i)
+         {
+            int q1 = transfunc[pair[0]][i];
+            int q2 = other.transfunc[pair[1]][i];
+            int q1q2 = Util.PairingFunction(q1,q2);
+            ret.SetTransition(new Transition(p1p2,q1q2,i));
+            if(!visited.contains(q1q2))
+            {
+               visited.add(q1q2);
+               queue.add(new int[]{q1,q2});
+            }
+         }
+      }
+      ret.statecount = ret.transfunc.length;
 
-      return null;
+      return ret;
    }
    public int[][] CreateCountStats(int step)
    {
