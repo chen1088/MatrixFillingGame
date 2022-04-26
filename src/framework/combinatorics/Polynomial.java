@@ -1,12 +1,11 @@
 package framework.combinatorics;
 
-import javafx.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class Polynomial {
@@ -16,6 +15,9 @@ public class Polynomial {
    public Polynomial(int d)
    {
       dim = d;
+   }
+   public Integer getConstant(){
+      return get(new Multivariable(new ArrayList<>(Collections.nCopies(dim,0))));
    }
    public Polynomial multiply(Polynomial o)
    {
@@ -43,9 +45,14 @@ public class Polynomial {
       }
       return res;
    }
+
    public void set(Multivariable mv, Integer coeff)
    {
       coeffDic.put(mv,coeff);
+   }
+   public Integer get(Multivariable mv)
+   {
+      return coeffDic.getOrDefault(mv,0);
    }
    public static void main(String[] args){
 
@@ -65,12 +72,46 @@ public class Polynomial {
       p2.set(m21,1);
       p2.set(m22,1);
       Polynomial p3 = p1.multiply(p2);
-      System.out.println(p3);
+//      System.out.println(p3);
 //      System.out.println(m.product(m2));
 //      System.out.println(m2.product(m3).isIdentity);
-
+      Polynomial p = getstepncyclic(1,5);
+      for(int i = 1;i<14;++i)
+      {
+         p=p.multiply(getstepncyclic(i+1,5));
+      }
+      System.out.println(p.getConstant()-(1<<14));
    }
 
+
+   public static Polynomial getstepncyclic(int n,int m)
+   {
+      if(n<=0||m<=0) return new Polynomial(0);
+      int d = m*(m+1)/2;
+      Polynomial res = new Polynomial(d);
+      //00,11
+      ArrayList<Integer> a0011 = new ArrayList<>();
+      for(int i =0;i<d;++i)
+         a0011.add(0);
+      Multivariable m0011 = new Multivariable(a0011);
+      res.set(m0011,2);
+      //01,10
+      ArrayList<Integer> a01 = new ArrayList<>();
+      ArrayList<Integer> a10 = new ArrayList<>();
+      for(int i = 1;i<m+1;++i)
+      {
+         for(int j = 0;j<i;++j)
+         {
+            a10.add((n-1)%i==j?1:0);
+            a01.add((n-1)%i==j?-1:0);
+         }
+      }
+      Multivariable m10 = new Multivariable(a10);
+      Multivariable m01 = new Multivariable(a01);
+      res.set(m10,1);
+      res.set(m01,1);
+      return res;
+   }
    @Override
    public String toString(){
       return coeffDic.toString();
@@ -105,7 +146,13 @@ class Multivariable implements Comparable<Multivariable>
    @Override
    public int compareTo(@NotNull Multivariable o) {
       // return the first difference
-
+      int s = Math.max(varlist.size(),o.varlist.size());
+      for(int i =0;i<s;++i)
+      {
+         Integer a = i<varlist.size()?varlist.get(i):0;
+         Integer b = i<o.varlist.size()?o.varlist.get(i):0;
+         if(!a.equals(b)) return a-b;
+      }
       return 0;
    }
    @Override
