@@ -56,31 +56,47 @@ public class Polynomial {
    }
    public static void main(String[] args){
 
-      Multivariable m11 = new Multivariable(new ArrayList<Integer>(Arrays.asList(1,1,0)));
-      Multivariable m12 = new Multivariable(new ArrayList<Integer>(Arrays.asList(-1,-1,0)));
-      Multivariable m21 = new Multivariable(new ArrayList<Integer>(Arrays.asList(1,0,1)));
-      Multivariable m22 = new Multivariable(new ArrayList<Integer>(Arrays.asList(-1,0,-1)));
-      Multivariable c = new Multivariable(new ArrayList<Integer>(Arrays.asList(0,0,0)));
-      Multivariable m2 = new Multivariable(new ArrayList<Integer>(Arrays.asList(1,0,1)));
-      Multivariable m3 = new Multivariable(new ArrayList<Integer>(Arrays.asList(-1,0,-1)));
-      Polynomial p1 = new Polynomial(3);
-      Polynomial p2 = new Polynomial(3);
-      p1.set(c,2);
-      p1.set(m11,1);
-      p1.set(m12,1);
-      p2.set(c,2);
-      p2.set(m21,1);
-      p2.set(m22,1);
-      Polynomial p3 = p1.multiply(p2);
-//      System.out.println(p3);
-//      System.out.println(m.product(m2));
-//      System.out.println(m2.product(m3).isIdentity);
-      Polynomial p = getstepncyclic(1,5);
-      for(int i = 1;i<14;++i)
-      {
-         p=p.multiply(getstepncyclic(i+1,5));
-      }
-      System.out.println(p.getConstant()-(1<<14));
+//      Multivariable m11 = new Multivariable(new ArrayList<Integer>(Arrays.asList(1,1,0)));
+//      Multivariable m12 = new Multivariable(new ArrayList<Integer>(Arrays.asList(-1,-1,0)));
+//      Multivariable m21 = new Multivariable(new ArrayList<Integer>(Arrays.asList(1,0,1)));
+//      Multivariable m22 = new Multivariable(new ArrayList<Integer>(Arrays.asList(-1,0,-1)));
+//      Multivariable c = new Multivariable(new ArrayList<Integer>(Arrays.asList(0,0,0)));
+//      Multivariable m2 = new Multivariable(new ArrayList<Integer>(Arrays.asList(1,0,1)));
+//      Multivariable m3 = new Multivariable(new ArrayList<Integer>(Arrays.asList(-1,0,-1)));
+//      Polynomial p1 = new Polynomial(3);
+//      Polynomial p2 = new Polynomial(3);
+//      p1.set(c,2);
+//      p1.set(m11,1);
+//      p1.set(m12,1);
+//      p2.set(c,2);
+//      p2.set(m21,1);
+//      p2.set(m22,1);
+//      Polynomial p3 = p1.multiply(p2);
+////      System.out.println(p3);
+////      System.out.println(m.product(m2));
+////      System.out.println(m2.product(m3).isIdentity);
+//      int step = 6;
+//      while(step!=0)
+//      {
+//         int tempres = -1;
+//         int len = 16;
+//         while(tempres !=0)
+//         {
+//            --len;
+//            Polynomial p = getstepncyclic(1,step);
+//            for(int i = 1;i<len;++i)
+//            {
+//               p=p.multiply(getstepncyclic(i+1,step));
+//            }
+//            tempres = p.getConstant()-(1<<len);
+//            System.out.println(tempres);
+//         }
+//         System.out.println("len = "+len+", step = "+step);
+//         --step;
+//      }
+         Polynomial p = getstepncyclicsingle(new ArrayList<>(Arrays.asList(2,3)),4);
+         System.out.println(p);
+
    }
 
 
@@ -110,6 +126,35 @@ public class Polynomial {
       Multivariable m01 = new Multivariable(a01);
       res.set(m10,1);
       res.set(m01,1);
+      return res;
+   }
+   public static Polynomial getstepncyclicsingle(ArrayList<Integer> sizes,int n )
+   {
+      int d = 0;
+      for(int s : sizes)
+      {
+         d+= s;
+      }
+      Polynomial res = new Polynomial(d);
+      ArrayList<Integer> a0 = new ArrayList<>();
+      for (int i = 0;i<d;++i)
+         a0.add(0);
+      Multivariable m0 = new Multivariable(a0);
+      res.set(m0,1);
+      ArrayList<Integer> a1 = new ArrayList<>();
+      for(int i: sizes)
+         for(int j = 0;j<i;++j)
+            a1.add((n-1)%i==j?1:0);
+      Multivariable m1 = new Multivariable(a1);
+      res.set(m1,1);
+      return res;
+   }
+   public double computesquareprob()
+   {
+      double res = 0.0;
+      for(double m: coeffDic.values()){
+         res += m*m;
+      }
       return res;
    }
    @Override
