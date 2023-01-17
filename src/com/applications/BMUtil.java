@@ -250,6 +250,7 @@ public class BMUtil {
          }
       return false;
    }
+
    public static void main(String[] args){
       int h = 6;
       int w = 6;

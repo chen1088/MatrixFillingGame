@@ -409,11 +409,32 @@ public class DFA {
 
       return ret;
    }
-   public int[][] CreateCountStats(int step)
+   public int[][] ComputeCountStats(int step)
    {
+      if(step<=0) return null;
       countingstats = new int[statecount][step];
-
+      Set<Integer>[][] invmap = GetInvMap();
+      countingstats[0][0] = 1;
+      for(int i = 1;i<step;++i)
+         for(int j = 0;j<statecount;++j)
+         {
+            Set<Integer>[] invstatesall = invmap[j];
+            for(int k = 0;k<alphabetsize;++k)
+            {
+               Set<Integer> invstates = invstatesall[k];
+               if(invstates == null) continue;
+               for(int p : invstates)
+               {
+                  countingstats[j][i] += countingstats[p][i-1];
+               }
+            }
+         }
       return countingstats;
+   }
+   public DFA IntersectsV2(DFA other)
+   {
+
+      return this;
    }
 
    // helper functions

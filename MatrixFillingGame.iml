@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="it.unimi.dsi:dsiutils:2.6.5" level="project" />
+    <orderEntry type="library" name="guru.nidi.graphviz.java" level="project" />
   </component>
 </module>

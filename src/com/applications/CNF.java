@@ -1,6 +1,10 @@
 package com.applications;
 
+import framework.combinatorics.DFA;
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CNF {
    public ArrayList<Clause> clauses = new ArrayList<>();
@@ -22,8 +26,18 @@ public class CNF {
       return true;
    }
    public CNF ResolveFull(){
+      //TODO:
       CNF ret = new CNF();
       ret.clauses.addAll(clauses);
+
+      return ret;
+   }
+   public static DFA convertCNFClausetoDFA(Clause clause)
+   {
+      //TODO:
+      DFA ret = new DFA();
+      Set<Integer> literals = new HashSet<>(clause.literals);
+      //ArrayList<Integer> literals = clause.literals;
 
       return ret;
    }

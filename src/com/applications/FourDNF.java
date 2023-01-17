@@ -1,7 +1,5 @@
 package com.applications;
 
-import com.sun.mail.iap.Literal;
-
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;

@@ -508,6 +508,14 @@ public class BMContainer {
          }
       return ret;
    }
+
+   // This function is experimental.
+   public CNF convertToStrongMFG(Integer[][] m)
+   {
+      CNF ret = new CNF();
+
+      return ret;
+   }
    public void Revert()
    {
       if (matrixhistory.size() <= 0) return;
