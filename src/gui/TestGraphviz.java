@@ -84,9 +84,9 @@ public class TestGraphviz {
       fa2.SetAcceptingState(2,true);
       fa2.SetAcceptingState(3,true);
       fa2.SetAcceptingState(4,true);
-      //DFA fa3 = fa.Intersects(fa2);
-      fa2 = fa2.Minimize();
-      return fa2;
+      DFA fa3 = fa.Intersects(fa2);
+      fa3 = fa3.Minimize();
+      return fa3;
    }
 
    public static Graph getgraphfromdfa(DFA d)

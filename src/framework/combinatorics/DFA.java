@@ -406,7 +406,7 @@ public class DFA {
          }
       }
       ret.statecount = ret.transfunc.length;
-
+      ret = ret.Trim();
       return ret;
    }
    public int[][] ComputeCountStats(int step)
