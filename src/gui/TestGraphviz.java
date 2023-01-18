@@ -66,9 +66,27 @@ public class TestGraphviz {
       fa.SetAcceptingState(2,true);
       fa.SetAcceptingState(3,true);
       fa.SetAcceptingState(4,true);
-      fa = fa.Intersects(fa);
-      fa = fa.Minimize();
-      return fa;
+      DFA fa2 = new DFA(6,2);
+      fa2.SetTransitions(new Transition[] {
+              new Transition(0,1,0),
+              new Transition(0,2,1),
+              new Transition(1,0,0),
+              new Transition(1,3, 1),
+              new Transition(2,4, 0),
+              new Transition(2,5, 1),
+              new Transition(3,4, 1),
+              new Transition(3,5, 0),
+              new Transition(4,4, 0),
+              new Transition(4,5, 1),
+              new Transition(5,5, 0),
+              new Transition(5,5, 1),
+      });
+      fa2.SetAcceptingState(2,true);
+      fa2.SetAcceptingState(3,true);
+      fa2.SetAcceptingState(4,true);
+      //DFA fa3 = fa.Intersects(fa2);
+      fa2 = fa2.Minimize();
+      return fa2;
    }
 
    public static Graph getgraphfromdfa(DFA d)
@@ -78,12 +96,13 @@ public class TestGraphviz {
       {
          Node n = node(String.valueOf(i));
          ns.add(n.link(
-                 to(node(String.valueOf(d.transfunc[i][0]))).with(Label.of("0")),
-                 to(node(String.valueOf(d.transfunc[i][1]))).with(Label.of("1"))
+                 to(node(String.valueOf(d.transfunc[i][0])).with(d.accstates[i]?Shape.DOUBLE_CIRCLE:Shape.CIRCLE)).with(Label.of("0")),
+                 to(node(String.valueOf(d.transfunc[i][1])).with(d.accstates[i]?Shape.DOUBLE_CIRCLE:Shape.CIRCLE)).with(Label.of("1"))
                  )
          );
       }
       Graph g = graph("result").directed()
+              .graphAttr().with(Rank.dir(LEFT_TO_RIGHT))
               .linkAttr().with("class","link=class")
               .with(ns);
       return g;
