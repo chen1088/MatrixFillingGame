@@ -24,7 +24,7 @@ public class FADisplayPanel {
       show_image_button.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            pic_label.setIcon(new ImageIcon(TestGraphviz.gettestimage()));
+            pic_label.setIcon(new ImageIcon(TestGraphviz.testdfatograph()));
          }
       });
    }

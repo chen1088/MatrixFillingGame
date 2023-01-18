@@ -2,18 +2,18 @@ package gui;
 
 import framework.combinatorics.DFA;
 import framework.combinatorics.Transition;
-import guru.nidi.graphviz.attribute.Color;
-import guru.nidi.graphviz.attribute.Font;
-import guru.nidi.graphviz.attribute.Rank;
-import guru.nidi.graphviz.attribute.Style;
+import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.Graph;
+import guru.nidi.graphviz.model.Node;
 
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static guru.nidi.graphviz.attribute.Attributes.attr;
 import static guru.nidi.graphviz.attribute.Rank.RankDir.LEFT_TO_RIGHT;
@@ -47,7 +47,7 @@ public class TestGraphviz {
               );
       return Graphviz.fromGraph(g).height(100).render(Format.PNG).toImage();
    }
-   private static void getadfa(){
+   private static DFA getadfa(){
       DFA fa = new DFA(6,2);
       fa.SetTransitions(new Transition[] {
               new Transition(0,1,0),
@@ -68,5 +68,27 @@ public class TestGraphviz {
       fa.SetAcceptingState(4,true);
       fa = fa.Intersects(fa);
       fa = fa.Minimize();
+      return fa;
+   }
+
+   public static Graph getgraphfromdfa(DFA d)
+   {
+      List<Node> ns = new ArrayList<>();
+      for(int i = 0;i<d.statecount;++i)
+      {
+         Node n = node(String.valueOf(i));
+         ns.add(n.link(
+                 to(node(String.valueOf(d.transfunc[i][0]))).with(Label.of("0")),
+                 to(node(String.valueOf(d.transfunc[i][1]))).with(Label.of("1"))
+                 )
+         );
+      }
+      Graph g = graph("result").directed()
+              .linkAttr().with("class","link=class")
+              .with(ns);
+      return g;
+   }
+   public static BufferedImage testdfatograph() {
+      return Graphviz.fromGraph(getgraphfromdfa(getadfa())).height(500).render(Format.PNG).toImage();
    }
 }
