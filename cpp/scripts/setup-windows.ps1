@@ -274,8 +274,10 @@ function Start-MfgSetup {
         }
         Invoke-Checked $venvPython @('-m', 'pip', 'install', '--disable-pip-version-check', 'aqtinstall==3.3.0')
         Write-Host 'Downloading prebuilt Qt 6.8.3 (this can take several minutes) ...'
+        # qtbase supplies this application's Core, Gui, Widgets, Test and
+        # deployment tools; Windows CI builds/tests/deploys with this same subset.
         Invoke-Checked $venvPython @('-m', 'aqt', 'install-qt', 'windows', 'desktop', '6.8.3',
-            'win64_msvc2022_64', '--outputdir', (Join-Path $toolDir 'Qt'))
+            'win64_msvc2022_64', '--outputdir', (Join-Path $toolDir 'Qt'), '--archives', 'qtbase')
         if (-not (Test-QtKit $kit)) { throw 'Qt installation is incomplete. Rerun setup-windows.cmd to retry.' }
     }
     $kit = (Resolve-Path -LiteralPath $kit).Path
