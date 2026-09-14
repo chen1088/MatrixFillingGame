@@ -3,9 +3,9 @@ name: C++ application
 on:
   push:
     branches: [master]
-    paths: ['cpp/**', '.github/workflows/cpp.yml']
+    paths: ['cpp/**', 'setup-windows.cmd', '.github/workflows/cpp.yml']
   pull_request:
-    paths: ['cpp/**', '.github/workflows/cpp.yml']
+    paths: ['cpp/**', 'setup-windows.cmd', '.github/workflows/cpp.yml']
   workflow_dispatch:
 
 permissions:
@@ -24,18 +24,31 @@ jobs:
       - uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4
         with:
           version: '6.8.3'
-          archives: qtbase
           cache: true
+      - name: Windows setup regression checks
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: ./cpp/tests/test_windows_setup.ps1
+      - name: Windows setup, build, test, and deployment
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: ./cpp/scripts/setup-windows.ps1 -QtRoot $env:QT_ROOT_DIR -NoInstall -SkipEditor
+        env:
+          QT_QPA_PLATFORM: offscreen
       - name: Configure
+        if: runner.os != 'Windows'
         run: cmake -S cpp -B cpp/build -DCMAKE_BUILD_TYPE=Release -DMFG_BUILD_GUI=ON
       - name: Build
+        if: runner.os != 'Windows'
         run: cmake --build cpp/build --config Release --parallel 3
       - name: Test
+        if: runner.os != 'Windows'
         run: ctest --test-dir cpp/build -C Release --output-on-failure
         env:
           QT_QPA_PLATFORM: offscreen
       - name: Check deployment
-        run: cmake --install cpp/build --config Release --prefix cpp/install
+        if: runner.os != 'Windows'
+        run: cmake --install cpp/build --config Release --prefix "${{ github.workspace }}/cpp/install"
 
   headless:
     runs-on: ubuntu-24.04

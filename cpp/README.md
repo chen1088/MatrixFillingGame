@@ -10,6 +10,62 @@ C++20 library. Java and a JVM are not required.
 Requirements: a C++20 compiler, CMake 3.21+, and Qt 6.4+ Widgets. Qt Test is needed
 when building tests. Graphviz is optional, for DFA graph layout only.
 
+### Windows setup for VS Code
+
+On Windows 10/11 **x64**, clone the repository and double-click
+[`setup-windows.cmd`](../setup-windows.cmd) in its root folder. You can also run
+it from a normal PowerShell terminal in that folder:
+
+```powershell
+.\setup-windows.cmd
+```
+
+The script installs missing Visual Studio 2022 C++ Build Tools, CMake, Python,
+VS Code, and Graphviz through Windows Package Manager (`winget`). It uses a
+Python environment for `aqtinstall` to download the prebuilt Qt 6.8.3 MSVC 2022
+kit, builds and tests the C++ application, and stages its runtime files. It
+then installs the C/C++ and CMake Tools VS Code extensions and opens
+`MatrixFillingGame.local.code-workspace`.
+
+In that workspace, press **F5** to build and run the desktop application with
+the debugger. Reopen this workspace file when returning to the project. Its
+machine-specific settings and downloaded dependencies are excluded from Git.
+The default configuration is `RelWithDebInfo`; build files are in
+`cpp/build-windows` and the runnable installation is
+`cpp/install-windows/bin/MatrixFillingGame.exe`.
+
+The first run can take a while because the compiler and Qt require substantial
+downloads and disk space. Run the launcher as your normal user; Windows may ask
+for permission to install system tools. If an installer requires a restart,
+restart Windows and run the same launcher again. VS Code may also ask you to
+trust the cloned workspace. Windows Package Manager must be available; if
+`winget` is missing, install or update Microsoft's
+[App Installer](https://learn.microsoft.com/en-us/windows/package-manager/winget/).
+
+Useful options, passed through the launcher:
+
+| Option | Purpose |
+| --- | --- |
+| `-QtRoot "C:\Qt\6.8.3\msvc2022_64"` | Reuse an existing matching Qt kit. |
+| `-NoInstall` | Use installed dependencies and fail if required tools are missing. |
+| `-SkipEditor` | Build without installing extensions or opening VS Code. |
+| `-SkipTests` | Skip the test run. |
+| `-BuildOnly` | Configure and build using the existing setup, without running installers. |
+
+For example, to use an existing compiler, CMake, and Qt without setting up
+the editor:
+
+```powershell
+.\setup-windows.cmd -QtRoot "C:\Qt\6.8.3\msvc2022_64" -NoInstall -SkipEditor
+```
+
+The Windows CI job exercises the script with an existing compiler and Qt kit,
+including compilation, tests, and runtime deployment. This does not validate
+the first-time `winget` installations, installer prompts, or VS Code UI on a
+fresh Windows machine.
+
+### Manual builds
+
 Ubuntu/Debian:
 
 ```sh
@@ -30,7 +86,7 @@ actual Qt kit directory in `CMAKE_PREFIX_PATH`, for example:
 cmake -S cpp -B cpp/build -DCMAKE_PREFIX_PATH="C:/Qt/6.8.3/msvc2022_64"
 cmake --build cpp/build --config Release --parallel
 ctest --test-dir cpp/build -C Release --output-on-failure
-cmake --install cpp/build --config Release --prefix cpp/install
+cmake --install cpp/build --config Release --prefix "$PWD/cpp/install"
 ./cpp/install/bin/MatrixFillingGame.exe
 ```
 

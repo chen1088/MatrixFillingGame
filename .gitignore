@@ -1,3 +1,4 @@
 *.class
 *.jar
 out/
+/MatrixFillingGame.local.code-workspace
