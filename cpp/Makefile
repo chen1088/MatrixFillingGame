@@ -1,25 +1,25 @@
-CXX ?= g++
-CXXFLAGS ?= -O3 -std=c++20 -Wall -Wextra -Wpedantic -Wconversion
-CPPFLAGS ?= -Iinclude
+# CMake is the single build definition. `make` includes the desktop application;
+# `make headless` builds the computational tools without Qt.
+CMAKE ?= cmake
 BUILD_DIR ?= build
+BUILD_TYPE ?= Release
+JOBS ?= 2
 
-CORE_SOURCES := src/model.cpp src/cnf.cpp src/search.cpp
-HEADERS := include/mfg/model.hpp include/mfg/cnf.hpp include/mfg/search.hpp
+.PHONY: all configure gui headless test clean
+all: configure
+	$(CMAKE) --build $(BUILD_DIR) --config $(BUILD_TYPE) --parallel $(JOBS)
 
-.PHONY: all test clean
+configure:
+	$(CMAKE) -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DMFG_BUILD_GUI=ON
 
-all: $(BUILD_DIR)/mfg_search
+gui: all
 
-$(BUILD_DIR)/mfg_search: $(CORE_SOURCES) src/main.cpp $(HEADERS)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE_SOURCES) src/main.cpp -o $@
+headless:
+	$(CMAKE) -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DMFG_BUILD_GUI=OFF
+	$(CMAKE) --build $(BUILD_DIR) --config $(BUILD_TYPE) --parallel $(JOBS)
 
-$(BUILD_DIR)/mfg_tests: $(CORE_SOURCES) tests/test_main.cpp $(HEADERS)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CORE_SOURCES) tests/test_main.cpp -o $@
-
-test: $(BUILD_DIR)/mfg_tests
-	./$(BUILD_DIR)/mfg_tests
+test: all
+	ctest --test-dir $(BUILD_DIR) -C $(BUILD_TYPE) --output-on-failure
 
 clean:
-	rm -rf $(BUILD_DIR)
+	$(CMAKE) --build $(BUILD_DIR) --target clean

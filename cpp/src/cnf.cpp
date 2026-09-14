@@ -12,11 +12,6 @@
 namespace mfg {
 namespace {
 
-bool clause_subset(const Clause& subset, const Clause& superset) {
-    return std::includes(superset.begin(), superset.end(),
-                         subset.begin(), subset.end());
-}
-
 std::string literal_text(const Literal literal) {
     std::ostringstream output;
     if (!literal.positive) {
@@ -28,21 +23,51 @@ std::string literal_text(const Literal literal) {
 
 } // namespace
 
-Cnf::Cnf(std::vector<Clause> clauses) : clauses_(std::move(clauses)) {
-    normalize();
+Cnf::Cnf(std::vector<Clause> clauses, const std::function<bool()>& cancelled)
+    : clauses_(std::move(clauses)) {
+    normalize(cancelled);
 }
 
-void Cnf::normalize() {
+void Cnf::normalize(const std::function<bool()>& cancelled) {
+    const auto check_cancelled = [&] {
+        if (cancelled && cancelled()) throw CnfCancelled();
+    };
+    check_cancelled();
+    std::size_t work = 0;
+    const auto checkpoint = [&] {
+        if ((++work & 127U) == 0) check_cancelled();
+    };
+    const auto literal_less = [&](const Literal left, const Literal right) {
+        checkpoint();
+        return left < right;
+    };
+    const auto clause_less = [&](const Clause& left, const Clause& right) {
+        checkpoint();
+        return std::lexicographical_compare(left.begin(), left.end(),
+                                            right.begin(), right.end(), literal_less);
+    };
+    const auto is_subset = [&](const Clause& subset, const Clause& superset) {
+        std::size_t first = 0, second = 0;
+        while (first < subset.size() && second < superset.size()) {
+            checkpoint();
+            if (subset[first] < superset[second]) return false;
+            if (subset[first] == superset[second]) ++first;
+            ++second;
+        }
+        return first == subset.size();
+    };
     std::vector<Clause> cleaned;
     cleaned.reserve(clauses_.size());
 
-    for (Clause clause : clauses_) {
-        std::sort(clause.begin(), clause.end());
+    for (Clause& clause : clauses_) {
+        checkpoint();
+        std::sort(clause.begin(), clause.end(), literal_less);
         Clause normalized;
         normalized.reserve(clause.size());
         bool tautology = false;
 
         for (const Literal literal : clause) {
+            checkpoint();
             if (!normalized.empty() && normalized.back().variable == literal.variable) {
                 if (normalized.back().positive != literal.positive) {
                     tautology = true;
@@ -57,31 +82,61 @@ void Cnf::normalize() {
         }
     }
 
-    std::sort(cleaned.begin(), cleaned.end(), [](const Clause& left, const Clause& right) {
+    std::sort(cleaned.begin(), cleaned.end(), [&](const Clause& left, const Clause& right) {
+        checkpoint();
         if (left.size() != right.size()) {
             return left.size() < right.size();
         }
-        return left < right;
+        return clause_less(left, right);
     });
-    cleaned.erase(std::unique(cleaned.begin(), cleaned.end()), cleaned.end());
+    cleaned.erase(std::unique(cleaned.begin(), cleaned.end(), [&](const Clause& left, const Clause& right) {
+        checkpoint();
+        if (left.size() != right.size()) return false;
+        for (std::size_t index = 0; index < left.size(); ++index) {
+            checkpoint();
+            if (left[index] != right[index]) return false;
+        }
+        return true;
+    }), cleaned.end());
 
     // The empty clause makes the entire conjunction false.
     if (!cleaned.empty() && cleaned.front().empty()) {
+        check_cancelled();
         clauses_ = {Clause{}};
         return;
     }
 
     // Remove clauses subsumed by a shorter (or equal-sized earlier) clause.
+    // Matrix clauses have at most four literals: looking up their at most 16
+    // subsets avoids a quadratic scan over all earlier clauses. Keep the
+    // general subset scan for longer clauses produced by projection.
     std::vector<Clause> irredundant;
+    std::set<Clause> short_clauses;
     for (Clause& candidate : cleaned) {
-        const bool subsumed = std::any_of(
-            irredundant.begin(), irredundant.end(),
-            [&candidate](const Clause& kept) { return clause_subset(kept, candidate); });
+        checkpoint();
+        bool subsumed = false;
+        if (candidate.size() <= 8) {
+            const std::size_t subset_count = std::size_t{1} << candidate.size();
+            for (std::size_t bits = 0; bits < subset_count && !subsumed; ++bits) {
+                checkpoint();
+                Clause subset;
+                for (std::size_t index = 0; index < candidate.size(); ++index)
+                    if ((bits >> index) & 1U) subset.push_back(candidate[index]);
+                subsumed = short_clauses.contains(subset);
+            }
+        } else {
+            for (const Clause& kept : irredundant) {
+                checkpoint();
+                if (is_subset(kept, candidate)) { subsumed = true; break; }
+            }
+        }
         if (!subsumed) {
+            if (candidate.size() <= 8) short_clauses.insert(candidate);
             irredundant.push_back(std::move(candidate));
         }
     }
-    std::sort(irredundant.begin(), irredundant.end());
+    std::sort(irredundant.begin(), irredundant.end(), clause_less);
+    check_cancelled();
     clauses_ = std::move(irredundant);
 }
 

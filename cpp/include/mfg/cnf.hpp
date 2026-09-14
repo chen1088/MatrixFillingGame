@@ -4,8 +4,10 @@
 
 #include <compare>
 #include <cstddef>
+#include <functional>
 #include <map>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -36,10 +38,16 @@ struct RectangleConstraint {
     bool satisfied_by_fixed_entry = false;
 };
 
+class CnfCancelled : public std::runtime_error {
+public:
+    CnfCancelled() : std::runtime_error("CNF normalization cancelled") {}
+};
+
 class Cnf {
 public:
     Cnf() = default; // The empty conjunction is true.
-    explicit Cnf(std::vector<Clause> clauses);
+    explicit Cnf(std::vector<Clause> clauses,
+                 const std::function<bool()>& cancelled = {});
 
     [[nodiscard]] const std::vector<Clause>& clauses() const noexcept { return clauses_; }
     [[nodiscard]] std::set<Coord> variables() const;
@@ -52,7 +60,7 @@ public:
     auto operator<=>(const Cnf&) const = default;
 
 private:
-    void normalize();
+    void normalize(const std::function<bool()>& cancelled);
 
     std::vector<Clause> clauses_;
 };

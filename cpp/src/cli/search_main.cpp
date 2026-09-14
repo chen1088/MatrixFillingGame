@@ -1,6 +1,7 @@
 #include "mfg/cnf.hpp"
 #include "mfg/model.hpp"
 #include "mfg/search.hpp"
+#include "mfg/analysis.hpp"
 
 #include <algorithm>
 #include <charconv>
@@ -19,6 +20,7 @@ struct Options {
     int max_sparsity = 5;
     bool compute_projections = true;
     std::optional<int> dump_sparsity;
+    bool blank_ratios = false;
 };
 
 [[noreturn]] void usage(const char* program, const int exit_code) {
@@ -27,6 +29,7 @@ struct Options {
            << "  --max-k N          enumerate normalized supports through sparsity N\n"
            << "  --no-projections   skip exact child-to-parent CNF projection\n"
            << "  --dump-k N         print every support, strong form, and CNF at level N\n"
+           << "  --blank-ratios     run the legacy B0/B sparse-support scoring experiment\n"
            << "  --help             show this help\n";
     std::exit(exit_code);
 }
@@ -49,6 +52,8 @@ Options parse_options(const int argc, char** argv) {
             usage(argv[0], 0);
         } else if (argument == "--no-projections") {
             options.compute_projections = false;
+        } else if (argument == "--blank-ratios") {
+            options.blank_ratios = true;
         } else if (argument == "--max-k" || argument == "--dump-k") {
             if (index + 1 >= argc) {
                 throw std::invalid_argument(std::string(argument) + " requires a value");
@@ -89,11 +94,39 @@ void dump_level(const int sparsity) {
     }
 }
 
+void score_blank_ratios(const int max_sparsity) {
+    const auto levels = mfg::enumerate_support_levels(max_sparsity);
+    std::cout << "Sparse-support B0/B experiment (zero-blank ratios are undefined)\n";
+    for (std::size_t level = 0; level < levels.size(); ++level) {
+        double maximum = -1;
+        std::size_t zero_blanks = 0;
+        std::cout << "\nk=" << (level + 1) << " supports=" << levels[level].size() << '\n';
+        for (const auto& support : levels[level]) {
+            const auto matrix = mfg::strong_normal_form(support);
+            const auto stats = mfg::blank_statistics(matrix);
+            if (stats.blanks == 0) { ++zero_blanks; continue; }
+            const double ratio = static_cast<double>(stats.b0) / static_cast<double>(stats.blanks);
+            if (ratio > maximum) {
+                maximum = ratio;
+                std::cout << "record B0/B=" << stats.b0 << '/' << stats.blanks
+                          << " ratio=" << std::setprecision(12) << ratio << '\n'
+                          << "support: " << support.key() << '\n' << matrix.to_string() << '\n';
+            }
+        }
+        std::cout << "zero-blank supports=" << zero_blanks << '\n';
+    }
+}
+
 } // namespace
 
 int main(const int argc, char** argv) {
     try {
         const Options options = parse_options(argc, argv);
+        if (options.blank_ratios) {
+            score_blank_ratios(options.max_sparsity);
+            if (options.dump_sparsity) dump_level(*options.dump_sparsity);
+            return 0;
+        }
         const mfg::SearchReport report =
             mfg::run_bounded_search(options.max_sparsity, options.compute_projections);
 
